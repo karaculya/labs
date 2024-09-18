@@ -34,6 +34,7 @@ public class Motorbike implements Transport {
     }
 
     private void update() {
+        if (this.size != this.models.length) this.size = this.models.length;
         if (this.head == null || getModelsSize() > 0) {
             this.head = this.models[0];
             if (getModelsSize() > 1) {
@@ -46,7 +47,7 @@ public class Motorbike implements Transport {
 
     @Override
     public int getModelsSize() {
-        return this.models.length;
+        return this.size;
     }
 
     @Override

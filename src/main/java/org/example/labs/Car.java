@@ -22,6 +22,9 @@ public class Car implements Transport {
         this.models = new Model[quantity];
     }
 
+    public Car() {
+    }
+
     //  метод для получения размера массива Моделей.
     public int getModelsSize() {
         return models.length;

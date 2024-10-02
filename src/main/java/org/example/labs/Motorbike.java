@@ -33,6 +33,10 @@ public class Motorbike implements Transport {
         this.lastModified = new Date().getTime();
     }
 
+    public Motorbike() {
+        this.lastModified = new Date().getTime();
+    }
+
     private void update() {
         if (this.size != this.models.length) this.size = this.models.length;
         if (this.head == null || getModelsSize() > 0) {

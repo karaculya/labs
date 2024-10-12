@@ -4,20 +4,23 @@ public class TransportUtils {
 
     public static double avg(Transport transport) {
         double count = 0;
-        for (double price : transport.getAllModelPrices()) {
+        double[] allModelPrices = transport.getAllModelPrices();
+        for (double price : allModelPrices) {
             count += price;
         }
         return count / transport.getModelsSize();
     }
 
     public static void printAllModelNames(Transport transport) {
-        for (String modelName : transport.getAllModelNames()) {
+        String[] allModelNames = transport.getAllModelNames();
+        for (String modelName : allModelNames) {
             System.out.println(modelName);
         }
     }
 
     public static void printAllModelPrices(Transport transport) {
-        for (double modelPrice : transport.getAllModelPrices()) {
+        double[] allModelPrices = transport.getAllModelPrices();
+        for (double modelPrice : allModelPrices) {
             System.out.println(modelPrice);
         }
     }

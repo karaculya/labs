@@ -6,105 +6,139 @@ import org.example.labs.exceptions.NoSuchModelNameException;
 
 import java.util.Arrays;
 
-/*
-Задание 1
-Написать класс Автомобиль. Он должен содержать:
-*/
-
-public class Car implements Transport {
-    //  поле типа String, хранящее марку автомобиля,
+public class Car implements Transport{
     private String mark;
     private Model[] models;
 
     //  Конструктор класса должен принимать в качестве параметров значение Марки автомобиля и размер массива Моделей.
-    public Car(String mark, int quantity) {
+    public Car(String mark, int modelsSize) {
         this.mark = mark;
-        this.models = new Model[quantity];
-    }
-
-    //  метод для получения размера массива Моделей.
-    public int getModelsSize() {
-        return models.length;
-    }
-
-    //  метод добавления названия модели и её цены (путем создания нового массива Моделей), использовать метод Arrays.copyOf(),
-    public void addNewModel(String modelName, double price) throws DuplicateModelNameException {
-        if (Arrays.stream(models).anyMatch(model -> model.modelName.equals(modelName))) {
-            throw new DuplicateModelNameException();
+        this.models = new Model[modelsSize];
+        for (int i = 0; i < modelsSize; i++) {
+            this.models[i] = null;
         }
-        models = Arrays.copyOf(models, models.length + 1);
-        models[models.length - 1] = new Model(modelName, price);
     }
 
-    //  метод удаления модели с заданным именем и её цены, использовать методы System.arraycopy, Arrays.copyOf(),
-    public void removeModel(String modelName, double price) throws NoSuchModelNameException {
-        if (Arrays.stream(models).noneMatch(model -> model.modelName.equals(modelName))) {
-            throw new NoSuchModelNameException();
-        } else if (getPriceByModelName(modelName) != price) {
-            throw new ModelPriceOutOfBoundsException();
+    @Override
+    public int getModelsSize() {
+        return this.models.length;
+    }
+
+    @Override
+    public void addNewModel(String modelName, double price) throws DuplicateModelNameException {
+        if (price < 0) throw new ModelPriceOutOfBoundsException();
+        else if (getModelsSize() >= 1 && models[0] == null) {
+            models = new Model[1];
+            models[0] = new Model(modelName, price);
         } else {
-            if (models.length - 1 == 0) models = new Model[0];
-            Model[] newArray = new Model[models.length - 1];
-            for (Model value : models) {
-                for (int i = 0; i < newArray.length; i++) {
-                    if (!(value.modelName.equals(modelName) && value.price == price)) {
-                        newArray[i] = value;
-                    }
+            for (Model model : models) {
+                if (model != null && model.modelName.equals(modelName)) throw new DuplicateModelNameException();
+            }
+            models = Arrays.copyOf(models, getModelsSize() + 1);
+            models[getModelsSize() - 1] = new Model(modelName, price);
+        }
+    }
+
+    @Override
+    public void removeModel(String modelName) throws NoSuchModelNameException {
+        if ((getModelsSize() == 1 && !this.models[0].modelName.equals(modelName))
+                || getModelsSize() == 0)
+            throw new NoSuchModelNameException();
+        else if (getModelsSize() == 1 && this.models[0].modelName.equals(modelName)) {
+            this.models = new Model[0];
+        } else {
+            Model[] newArray = new Model[getModelsSize() - 1];
+            boolean isContains = false;
+
+            for (int i = 0, j = 0; i < getModelsSize(); i++) {
+                if (models[i].modelName.equals(modelName))
+                    isContains = true;
+                else if (j < newArray.length) {
+                    newArray[j] = models[i];
+                    j++;
                 }
             }
+
+            if (!isContains) throw new NoSuchModelNameException();
 
             System.arraycopy(newArray, 0, models, 0, newArray.length);
             models = Arrays.copyOf(models, newArray.length);
         }
     }
 
-    //  метод, возвращающий массив названий всех моделей,
+    @Override
     public String[] getAllModelNames() {
-        String[] allModelNames = new String[models.length];
-        for (int i = 0; i < models.length; i++) {
+        String[] allModelNames = new String[getModelsSize()];
+        for (int i = 0; i < getModelsSize(); i++) {
             allModelNames[i] = models[i].modelName;
         }
         return allModelNames;
     }
 
-    //  метод, возвращающий массив значений цен моделей,
+    @Override
     public double[] getAllModelPrices() {
-        double[] array = new double[models.length];
-        for (int i = 0; i < models.length; i++) {
+        double[] array = new double[getModelsSize()];
+        for (int i = 0; i < getModelsSize(); i++) {
             array[i] = models[i].price;
         }
         return array;
     }
 
-    //  метод для модификации значения цены модели по её названию,
+    @Override
     public void setPriceByModelName(String name, double newPrice) throws NoSuchModelNameException {
-        if (Arrays.stream(models).noneMatch(model -> model.modelName.equals(name))) {
-            throw new NoSuchModelNameException();
-        }
+        if (newPrice > 0) {
+            if (getModelsSize() >= 1) {
+                boolean isContains = false;
 
-        Arrays.stream(models)
-                .filter(model -> model.modelName.equals(name))
-                .findFirst()
-                .ifPresent(model -> model.price = newPrice);
+                for (Model model : models) {
+                    if (model.modelName.equals(name)) {
+                        model.price = newPrice;
+                        isContains = true;
+                        break;
+                    }
+                }
+
+                if (!isContains) throw new NoSuchModelNameException();
+            } else
+                throw new NoSuchModelNameException();
+        } else
+            throw new ModelPriceOutOfBoundsException();
     }
 
-    //  метод для получения значения цены модели по её названию,
+    @Override
     public double getPriceByModelName(String name) throws NoSuchModelNameException {
-        if (Arrays.stream(models).noneMatch(model -> model.modelName.equals(name))) {
-            throw new NoSuchModelNameException();
+        if (getModelsSize() >= 1) {
+            for (Model model : models) {
+                if (model.modelName.equals(name)) return model.price;
+            }
         }
-        return Arrays.stream(models)
-                .filter(model -> model.modelName.equals(name))
-                .findFirst()
-                .map(value -> value.price).orElse(0.0);
+        throw new NoSuchModelNameException();
     }
 
-    //  метод для получения марки автомобиля,
+    @Override
+    public void setModelName(String oldName, String newName) throws NoSuchModelNameException {
+        if (getModelsSize() >= 1) {
+            boolean isContains = false;
+
+            for (Model model : models) {
+                if (model.modelName.equals(oldName)) {
+                    model.modelName = newName;
+                    isContains = true;
+                    break;
+                }
+            }
+
+            if (!isContains) throw new NoSuchModelNameException();
+        } else
+            throw new NoSuchModelNameException();
+    }
+
+    @Override
     public String getMark() {
-        return mark;
+        return this.mark;
     }
 
-    //  метод для модификации марки автомобиля,
+    @Override
     public void setMark(String mark) {
         this.mark = mark;
     }
@@ -118,14 +152,6 @@ public class Car implements Transport {
         Model(String modelName, double price) {
             this.modelName = modelName;
             this.price = price;
-        }
-
-        //  метод для модификации значения названия модели,
-        void setModelName(String modelName) throws DuplicateModelNameException {
-            if (Arrays.stream(models).anyMatch(model -> model.modelName.equals(modelName))) {
-                throw new DuplicateModelNameException();
-            }
-            this.modelName = modelName;
         }
     }
 }

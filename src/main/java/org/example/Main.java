@@ -32,7 +32,7 @@ public class Main {
         TransportUtils.printAllModelPrices(car);
         System.out.println("Average price is " + TransportUtils.avg(car));
 
-        car.removeModel("Camry", 35.0);
+        car.removeModel("Camry");
         System.out.println("All model names:");
         TransportUtils.printAllModelNames(car);
 
@@ -57,7 +57,7 @@ public class Main {
         TransportUtils.printAllModelPrices(motorbike);
         System.out.println(TransportUtils.avg(motorbike));
 
-        motorbike.removeModel("i5 sedan", 35.0);
+        motorbike.removeModel("i5 sedan");
         System.out.println("Models size is " + motorbike.getModelsSize());
         System.out.println("All model names after removing i5 sedan: ");
         TransportUtils.printAllModelNames(motorbike);

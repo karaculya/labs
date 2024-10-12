@@ -1,7 +1,6 @@
 package org.example.labs;
 
 import org.example.labs.exceptions.DuplicateModelNameException;
-import org.example.labs.exceptions.ModelPriceOutOfBoundsException;
 import org.example.labs.exceptions.NoSuchModelNameException;
 import org.junit.jupiter.api.Test;
 
@@ -39,11 +38,9 @@ class CarTest {
         car.addNewModel("Toyota Camry", 30.0);
 
         assertThrows(NoSuchModelNameException.class,
-                () ->car.removeModel("Toyota Camry 35", 30.0));
-        assertThrows(ModelPriceOutOfBoundsException.class,
-                () -> car.removeModel("Toyota Camry", 20.0));
+                () ->car.removeModel("Toyota Camry 35"));
 
-        car.removeModel("Toyota Camry", 30.0);
+        car.removeModel("Toyota Camry");
         assertEquals(0, car.getModelsSize());
     }
 

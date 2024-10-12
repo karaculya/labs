@@ -13,19 +13,18 @@ class MotorbikeTest {
     private Motorbike motorbike;
 
     @BeforeEach
-    void setUp() {
+    void setUp() throws DuplicateModelNameException {
         motorbike = new Motorbike("mark", 0);
+        motorbike.addNewModel("model1", 50.0);
     }
 
     @Test
     void getModelsSize() {
-        assertEquals(0, motorbike.getModelsSize());
+        assertEquals(1, motorbike.getModelsSize());
     }
 
     @Test
-    void addNewModel() throws DuplicateModelNameException, NoSuchModelNameException {
-        motorbike.addNewModel("model1", 50.0);
-
+    void addNewModel() throws NoSuchModelNameException {
         assertEquals(1, motorbike.getModelsSize());
         assertEquals(50.0, motorbike.getPriceByModelName("model1"));
         assertThrows(DuplicateModelNameException.class,
@@ -33,15 +32,11 @@ class MotorbikeTest {
     }
 
     @Test
-    void removeModel() throws NoSuchModelNameException, DuplicateModelNameException {
-        motorbike.addNewModel("model1", 50.0);
-
+    void removeModel() throws NoSuchModelNameException {
         assertThrows(NoSuchModelNameException.class,
-                () -> motorbike.removeModel("model", 50.0));
-        assertThrows(ModelPriceOutOfBoundsException.class,
-                () -> motorbike.removeModel("model1", 10.0));
+                () -> motorbike.removeModel("model"));
 
-        motorbike.removeModel("model1", 50.0);
+        motorbike.removeModel("model1");
 
         assertEquals(0, motorbike.getModelsSize());
         assertThrows(NoSuchModelNameException.class,
@@ -50,43 +45,55 @@ class MotorbikeTest {
 
     @Test
     void getAllModelNames() throws DuplicateModelNameException {
-        motorbike.addNewModel("model1", 10.0);
         motorbike.addNewModel("model2", 20.0);
         motorbike.addNewModel("model3", 30.0);
 
-        String[] modelNames = {"model1", "model2", "model3"};
-        assertEquals(modelNames.length, motorbike.getModelsSize());
-
-        for (int i = 0; i < motorbike.getAllModelNames().length; i++) {
-            for (int j = 0; j < modelNames.length; j++) {
-                assertEquals(modelNames[i], motorbike.getAllModelNames()[i]);
-            }
+        String[] exceptedModelNames = {"model1", "model2", "model3"};
+        String[] actualModelNames = motorbike.getAllModelNames();
+        assertEquals(exceptedModelNames.length, actualModelNames.length);
+        for (int i = 0; i < exceptedModelNames.length; i++) {
+            assertEquals(exceptedModelNames[i], actualModelNames[i]);
         }
     }
 
     @Test
     void getAllModelPrices() throws DuplicateModelNameException {
-        motorbike.addNewModel("model1", 10.0);
         motorbike.addNewModel("model2", 20.0);
         motorbike.addNewModel("model3", 30.0);
 
-        double[] modelPrices = {10.0, 20.0, 30.0};
-        assertEquals(modelPrices.length, motorbike.getModelsSize());
+        double[] expectedModelPrices = {50.0, 20.0, 30.0};
+        double[] actualModelPrices = motorbike.getAllModelPrices();
+        assertEquals(expectedModelPrices.length, actualModelPrices.length);
 
-        for (int i = 0; i < motorbike.getAllModelPrices().length; i++) {
-            for (int j = 0; j < modelPrices.length; j++) {
-                assertEquals(modelPrices[i], motorbike.getAllModelPrices()[i]);
-            }
+        for (int i = 0; i < expectedModelPrices.length; i++) {
+            assertEquals(expectedModelPrices[i], actualModelPrices[i]);
         }
     }
 
     @Test
     void setPriceByModelName() throws DuplicateModelNameException, NoSuchModelNameException {
-        motorbike.addNewModel("model", 30.0);
+        motorbike.setPriceByModelName("model1", 40.0);
 
-        assertEquals(30.0, motorbike.getPriceByModelName("model"));
+        assertEquals(40.0, motorbike.getPriceByModelName("model1"));
         assertThrows(NoSuchModelNameException.class,
-                () -> motorbike.getPriceByModelName("m"));
+                () -> motorbike.setPriceByModelName("m", 30.0));
+    }
 
+    @Test
+    void getPriceByModelName() throws NoSuchModelNameException {
+        assertEquals(50.0, motorbike.getPriceByModelName("model1"));
+
+        motorbike.setPriceByModelName("model1", 30.0);
+        assertEquals(30.0, motorbike.getPriceByModelName("model1"));
+    }
+
+    @Test
+    void setModelName() throws NoSuchModelNameException {
+        assertThrows(NoSuchModelNameException.class,
+                () -> motorbike.setModelName("asd", "dsa"));
+
+        motorbike.setModelName("model1", "new model");
+        assertThrows(DuplicateModelNameException.class,
+                () -> motorbike.addNewModel("new model", 30.0));
     }
 }

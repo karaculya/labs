@@ -4,7 +4,6 @@ import org.example.labs.exceptions.DuplicateModelNameException;
 import org.example.labs.exceptions.ModelPriceOutOfBoundsException;
 import org.example.labs.exceptions.NoSuchModelNameException;
 
-import java.util.Arrays;
 import java.util.Date;
 
 /*
@@ -18,30 +17,11 @@ public class Motorbike implements Transport {
     private Model head;
     private long lastModified;
     private String mark;
-    private Model[] models;
 
     public Motorbike(String mark, int size) {
         this.mark = mark;
-        this.models = new Model[size];
-        if (size != 0) {
-            this.head = this.models[0];
-            if (size > 1) {
-                this.head.prev = this.models[getModelsSize() - 1];
-                this.head.next = this.models[1];
-            }
-        } else this.head = null;
-        this.lastModified = new Date().getTime();
-    }
-
-    private void update() {
-        if (this.size != this.models.length) this.size = this.models.length;
-        if (this.head == null || getModelsSize() > 0) {
-            this.head = this.models[0];
-            if (getModelsSize() > 1) {
-                this.head.prev = models[getModelsSize() - 1];
-                this.head.next = models[1];
-            }
-        }
+        this.size = size;
+        this.head = null;
         this.lastModified = new Date().getTime();
     }
 
@@ -52,53 +32,66 @@ public class Motorbike implements Transport {
 
     @Override
     public void addNewModel(String modelName, double price) throws DuplicateModelNameException {
-        if (Arrays.stream(models).anyMatch(model -> model.modelName.equals(modelName))) {
-            throw new DuplicateModelNameException();
-        } else {
-            if (head == null) {
-                models = new Model[1];
-                models[getModelsSize() - 1] = new Model(modelName, models[0], price);
-            } else {
-                Model newModel = new Model(modelName, models[getModelsSize() - 1], price);
-                models[getModelsSize() - 1].next = newModel;
-                models = Arrays.copyOf(models, getModelsSize() + 1);
-                models[getModelsSize() - 1] = newModel;
+        if (this.head == null) {
+            this.head = new Model(modelName, null, price);
+            this.size = 1;
+        } else if (this.head.next == null) {
+            if (this.head.modelName.equals(modelName)) throw new DuplicateModelNameException();
+            else {
+                this.head.next = new Model(modelName, this.head, price);
+                this.head.prev = this.head.next;
+                this.size++;
             }
-            update();
+        } else {
+            if (this.head.modelName.equals(modelName)) throw new DuplicateModelNameException();
+            Model currentModel = this.head;
+            while (!currentModel.equals(this.head.prev)) {
+                currentModel = currentModel.next;
+                if (currentModel.modelName.equals(modelName)) throw new DuplicateModelNameException();
+            }
+
+            this.head.prev.next = new Model(modelName, this.head.prev, price);
+            this.head.prev = this.head.prev.next;
+
+            this.size++;
         }
+        this.lastModified = new Date().getTime();
     }
 
     @Override
-    public void removeModel(String modelName, double price) throws NoSuchModelNameException {
-        if (Arrays.stream(models).noneMatch(model -> model.modelName.equals(modelName))) {
-            throw new NoSuchModelNameException();
-        } else if (getPriceByModelName(modelName) != price) {
-            throw new ModelPriceOutOfBoundsException();
+    public void removeModel(String modelName) throws NoSuchModelNameException {
+        if (this.head == null) throw new NoSuchModelNameException();
+        else if (this.head.next == null) {
+            if (this.head.modelName.equals(modelName))
+                this.head = null;
+            else throw new NoSuchModelNameException();
         } else {
-            if (getModelsSize() <= 1) {
-                models = new Model[0];
-            } else {
-                Model[] newModels = new Model[getModelsSize() - 1];
-                for (Model model : models) {
-                    for (int i = 0; i < newModels.length; i++) {
-                        if (model.modelName.equals(modelName) && model.price == price) {
-                            model.next.prev = model.prev;
-                            model.prev.next = model.next;
-                        } else newModels[i] = model;
-                    }
+            Model currentModel = this.head;
+            while (!currentModel.equals(this.head.prev)) {
+                if (currentModel.next.equals(this.head.prev)) {
+                    if (currentModel.next.modelName.equals(modelName))
+                        currentModel = currentModel.next;
+                    else throw new NoSuchModelNameException();
                 }
-                models = new Model[newModels.length];
-                System.arraycopy(newModels, 0, models, 0, newModels.length);
+                if (currentModel.modelName.equals(modelName)) {
+                    currentModel.prev = currentModel.next;
+                    currentModel.next.prev = currentModel.prev;
+                    break;
+                }
+                currentModel = currentModel.next;
             }
-            update();
         }
+        this.size--;
+        this.lastModified = new Date().getTime();
     }
 
     @Override
     public String[] getAllModelNames() {
         String[] allModels = new String[getModelsSize()];
+        Model currentModel = this.head;
         for (int i = 0; i < getModelsSize(); i++) {
-            allModels[i] = models[i].modelName;
+            allModels[i] = currentModel.modelName;
+            currentModel = currentModel.next;
         }
         return allModels;
     }
@@ -106,38 +99,86 @@ public class Motorbike implements Transport {
     @Override
     public double[] getAllModelPrices() {
         double[] allPrices = new double[getModelsSize()];
+        Model currentModel = this.head;
         for (int i = 0; i < getModelsSize(); i++) {
-            allPrices[i] = models[i].price;
+            allPrices[i] = currentModel.price;
+            currentModel = currentModel.next;
         }
         return allPrices;
     }
 
     @Override
     public void setPriceByModelName(String name, double newPrice) throws NoSuchModelNameException {
-        if (Arrays.stream(models).noneMatch(model -> model.modelName.equals(name))) {
-            throw new NoSuchModelNameException();
+        if (this.head == null) throw new NoSuchModelNameException();
+        else if (this.head.next == null) {
+            if (!this.head.modelName.equals(name)) throw new NoSuchModelNameException();
+            else this.head.price = newPrice;
         } else {
-            for (Model model : models) {
-                if (model.modelName.equals(name)) {
-                    model.price = newPrice;
+            Model currentModel = this.head;
+            while (currentModel.equals(this.head.prev)) {
+                if (currentModel.next.equals(this.head.prev)) {
+                    if (!currentModel.next.modelName.equals(name)) throw new NoSuchModelNameException();
+                    else {
+                        currentModel.next.price = newPrice;
+                        break;
+                    }
                 }
+                if (currentModel.modelName.equals(name)) {
+                    if (currentModel.price == newPrice) throw new ModelPriceOutOfBoundsException();
+                    currentModel.price = newPrice;
+                    break;
+                }
+                currentModel = currentModel.next;
             }
-            update();
         }
+        this.lastModified = new Date().getTime();
     }
 
     @Override
     public double getPriceByModelName(String name) throws NoSuchModelNameException {
-        if (Arrays.stream(models).noneMatch(model -> model.modelName.equals(name))) {
-            throw new NoSuchModelNameException();
-        } else {
-            for (Model model : models) {
-                if (model.modelName.equals(name)) {
-                    return model.price;
+        if (this.head == null) throw new NoSuchModelNameException();
+        else if (this.head.next == null)
+            if (!this.head.modelName.equals(name)) throw new NoSuchModelNameException();
+            else return this.head.price;
+        else {
+            Model currentModel = this.head;
+            while (currentModel.equals(this.head.prev)) {
+                if (currentModel.next.equals(this.head.prev)) {
+                    if (currentModel.next.modelName.equals(name)) return currentModel.next.price;
+                    else throw new NoSuchModelNameException();
                 }
+                if (currentModel.modelName.equals(name)) return currentModel.price;
+                currentModel = currentModel.next;
             }
         }
         return 0;
+    }
+
+    @Override
+    public void setModelName(String oldName, String newName) throws NoSuchModelNameException {
+        if (this.head == null) throw new NoSuchModelNameException();
+        else if (this.head.next == null) {
+            if (this.head.modelName.equals(oldName))
+                this.head.modelName = newName;
+            else throw new NoSuchModelNameException();
+        } else {
+            Model currentModel = this.head;
+            while (currentModel.equals(this.head.prev)) {
+                if (currentModel.modelName.equals(oldName)) {
+                    currentModel.modelName = newName;
+                    break;
+                }
+                if (currentModel.next.equals(this.head.prev)) {
+                    if (!currentModel.next.modelName.equals(oldName)) throw new NoSuchModelNameException();
+                    else {
+                        this.head.prev.modelName = newName;
+                        break;
+                    }
+                }
+                currentModel = currentModel.next;
+            }
+        }
+        this.lastModified = new Date().getTime();
     }
 
     @Override
@@ -158,9 +199,8 @@ public class Motorbike implements Transport {
 
         public Model(String modelName, Model prev, double price) {
             this.modelName = modelName;
-            this.next = head;
-            this.prev = prev;
             this.price = price;
+            this.prev = prev;
         }
     }
 }

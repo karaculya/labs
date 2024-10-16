@@ -7,6 +7,7 @@ import org.example.labs.exceptions.NoSuchModelNameException;
 import java.util.Arrays;
 
 public class Car implements Transport {
+    //  поле типа String, хранящее марку автомобиля,
     private String mark;
     private Model[] models;
 

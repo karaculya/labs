@@ -1,15 +1,19 @@
 package org.example;
 
+import com.sun.jdi.connect.Transport;
 import org.example.labs.Car;
-import org.example.labs.Motorbike;
 import org.example.labs.TransportUtils;
 import org.example.labs.exceptions.DuplicateModelNameException;
 import org.example.labs.exceptions.NoSuchModelNameException;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+
 //TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
 // click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
 public class Main {
-    public static void main(String[] args) throws DuplicateModelNameException, NoSuchModelNameException {
+    public static void main(String[] args) throws DuplicateModelNameException, NoSuchModelNameException, FileNotFoundException {
 
         Car car = new Car("Toyota", 0);
         car.addNewModel("Camry", 30.0);
@@ -32,7 +36,7 @@ public class Main {
         TransportUtils.printAllModelPrices(car);
         System.out.println("Average price is " + TransportUtils.avg(car));
 
-        car.removeModel("Camry");
+        car.removeModel("Camry", 35.0);
         System.out.println("All model names:");
         TransportUtils.printAllModelNames(car);
 
@@ -57,9 +61,14 @@ public class Main {
         TransportUtils.printAllModelPrices(motorbike);
         System.out.println(TransportUtils.avg(motorbike));
 
-        motorbike.removeModel("i5 sedan");
+        motorbike.removeModel("i5 sedan", 35.0);
         System.out.println("Models size is " + motorbike.getModelsSize());
         System.out.println("All model names after removing i5 sedan: ");
         TransportUtils.printAllModelNames(motorbike);
+
+        String FILE_PATH = "C:\\Users\\sirar\\IdeaProjects\\labs\\src\\main\\resources\\file.txt";
+
+        TransportUtils.outputTransport(car, new FileOutputStream(FILE_PATH));
+        TransportUtils.inputTransport(new FileInputStream(FILE_PATH));
     }
 }

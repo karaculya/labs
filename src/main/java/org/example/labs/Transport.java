@@ -19,7 +19,8 @@ interface Transport {
     //  7. метод для получения значения цены модели по её названию,
     double getPriceByModelName(String name) throws NoSuchModelNameException;
     //  8. с двумя параметрами типа string (old and new) 1 итерация;
-    void setModelName(String oldName, String newName) throws NoSuchModelNameException;
+// дубликат
+    void setModelName(String oldName, String newName) throws NoSuchModelNameException, DuplicateModelNameException;
     //  9. метод для получения марки автомобиля,
     String getMark();
     //  10. метод для модификации марки автомобиля,

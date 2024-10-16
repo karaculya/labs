@@ -1,7 +1,6 @@
 package org.example.labs;
 
 import org.example.labs.exceptions.DuplicateModelNameException;
-import org.example.labs.exceptions.ModelPriceOutOfBoundsException;
 import org.example.labs.exceptions.NoSuchModelNameException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -88,7 +87,7 @@ class MotorbikeTest {
     }
 
     @Test
-    void setModelName() throws NoSuchModelNameException {
+    void setModelName() throws NoSuchModelNameException, DuplicateModelNameException {
         assertThrows(NoSuchModelNameException.class,
                 () -> motorbike.setModelName("asd", "dsa"));
 

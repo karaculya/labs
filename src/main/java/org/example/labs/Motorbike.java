@@ -17,26 +17,36 @@ public class Motorbike implements Transport {
     private Model head;
     private long lastModified;
     private String mark;
-
+    {
+        this.head = new Model("headModel", null, null, 100);
+        this.head.prev = this.head;
+        this.head.next = this.head;
+        this.lastModified = new Date().getTime();
+    }
     public Motorbike(String mark, int size) {
         this.mark = mark;
         this.size = size;
-        Model prev = null;
-        for (int i = 0; i < size - 1; i++) {
-            Model currentModel = new Model("", null, null, 0);
-            if (i == 0) {
-                this.head = new Model("", currentModel, currentModel, 0);
-                currentModel.prev = this.head;
+        if (size > 1) {
+            Model prev = null;
+            for (int i = 0; i < size - 1; i++) {
+                Model currentModel = new Model("name" + i, null, null, i);
+                if (i == 0) {
+                    this.head.prev = currentModel;
+                    this.head.next = currentModel;
+                    currentModel.prev = this.head;
+
+                } else {
+                    currentModel.prev = prev;
+                    this.head.prev.next = currentModel;
+                    this.head.prev = currentModel;
+                }
                 currentModel.next = this.head;
-            } else {
-                currentModel.prev = prev;
-                currentModel.next = this.head;
-                this.head.prev.next = currentModel;
-                this.head.prev = currentModel;
+                prev = currentModel;
             }
-            prev = currentModel;
         }
-        this.lastModified = new Date().getTime();
+    }
+
+    public Motorbike() {
     }
 
     @Override
@@ -53,23 +63,14 @@ public class Motorbike implements Transport {
                 this.head.next = this.head;
             } else {
                 Model currentModel = this.head;
-                int emptyCount = 0;
+
                 for (int i = 0; i < getModelsSize(); i++) {
                     if (currentModel.modelName.equals(modelName)) throw new DuplicateModelNameException();
-                    else if (currentModel.modelName.isEmpty()) emptyCount++;
                     currentModel = currentModel.next;
                 }
-
-                if (emptyCount == getModelsSize()) {
-                    this.head = new Model(modelName, this.head, this.head, price);
-                    this.head.prev = this.head;
-                    this.head.next = this.head;
-                    this.size = 0;
-                } else {
                     Model newModel = new Model(modelName, this.head, this.head.prev, price);
                     this.head.prev.next = newModel;
                     this.head.prev = newModel;
-                }
             }
             this.size++;
         } else throw new ModelPriceOutOfBoundsException();

@@ -4,9 +4,10 @@ import org.example.labs.exceptions.DuplicateModelNameException;
 import org.example.labs.exceptions.ModelPriceOutOfBoundsException;
 import org.example.labs.exceptions.NoSuchModelNameException;
 
+import java.io.Serializable;
 import java.util.Arrays;
 
-public class Car implements Transport {
+public class Car implements Transport, Serializable {
     //  поле типа String, хранящее марку автомобиля,
     private String mark;
     private Model[] models;
@@ -16,8 +17,11 @@ public class Car implements Transport {
         this.mark = mark;
         this.models = new Model[modelsSize];
         for (int i = 0; i < modelsSize; i++) {
-            this.models[i] = new Model("", 0);
+            this.models[i] = new Model("name"+i, 0);
         }
+    }
+
+    public Car() {
     }
 
     @Override
@@ -27,27 +31,28 @@ public class Car implements Transport {
 
     @Override
     public void addNewModel(String modelName, double price) throws DuplicateModelNameException {
-        if (price < 0) throw new ModelPriceOutOfBoundsException();
+        if (price <= 0) throw new ModelPriceOutOfBoundsException();
         else {
-            int countEmptyModels = 0;
+            //int countEmptyModels = 0;
             for (Model model : this.models) {
                 if (model.modelName.equals(modelName)) throw new DuplicateModelNameException();
-                else if (model.modelName.isEmpty()) countEmptyModels++;
+              //  else if (model.modelName.isEmpty()) countEmptyModels++;
             }
 
-            if (countEmptyModels == getModelsSize()) {
-                this.models = new Model[1];
-                this.models[0] = new Model(modelName, price);
-            } else {
+            //if (countEmptyModels == getModelsSize()) {
+              //  this.models = new Model[1];
+               // this.models[0] = new Model(modelName, price);
+            //} else {
                 this.models = Arrays.copyOf(this.models, getModelsSize() + 1);
                 this.models[getModelsSize() - 1] = new Model(modelName, price);
-            }
+           // }
         }
     }
 
     @Override
     public void removeModel(String modelName) throws NoSuchModelNameException {
-        if ((getModelsSize() == 1 && !this.models[0].modelName.equals(modelName)) || getModelsSize() == 0)
+        if ((getModelsSize() == 1 && !this.models[0].modelName.equals(modelName))
+                || getModelsSize() == 0)
             throw new NoSuchModelNameException();
         else if (getModelsSize() == 1 && this.models[0].modelName.equals(modelName))
             this.models = new Model[0];

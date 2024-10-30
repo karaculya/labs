@@ -21,8 +21,6 @@ public class Car implements Transport {
         }
     }
 
-    public Car() {
-    }
 /*
     @Serial
     public void writeObject(ObjectOutputStream oos) throws IOException {
@@ -174,17 +172,6 @@ public class Car implements Transport {
         Model(String modelName, double price) {
             this.modelName = modelName;
             this.price = price;
-        }
-
-        @Serial
-        public void writeObject(ObjectOutputStream oos) throws IOException {
-            oos.defaultWriteObject();
-        }
-
-        @Serial
-        public Model readObject(ObjectInputStream ois) throws ClassNotFoundException, IOException {
-            ois.defaultReadObject();
-            return this;
         }
     }
 }

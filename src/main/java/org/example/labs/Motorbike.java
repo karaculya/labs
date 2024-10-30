@@ -49,8 +49,6 @@ public class Motorbike implements Transport {
         }
     }
 
-    public Motorbike() {
-    }
 /*
     @Serial
     public void writeObject(ObjectOutputStream oos) throws IOException {
@@ -250,17 +248,6 @@ public class Motorbike implements Transport {
             this.next = next;
             this.prev = prev;
             this.price = price;
-        }
-
-        @Serial
-        public void writeObject(ObjectOutputStream oos) throws IOException {
-            oos.defaultWriteObject();
-        }
-
-        @Serial
-        public Model readObject(ObjectInputStream ois) throws ClassNotFoundException, IOException {
-            ois.defaultReadObject();
-            return this;
         }
 
         @Override

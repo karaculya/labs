@@ -13,7 +13,7 @@ import java.io.*;
 // click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
 public class Main {
     public static void main(String[] args) throws DuplicateModelNameException, NoSuchModelNameException, IOException, ClassNotFoundException {
-        String path = "C:\\Users\\sirar\\IdeaProjects\\labs\\src\\main\\resources\\file.txt";
+        String path = "file.txt";
         Transport car = new Car("Toyota", 3);
         Transport motorbike = new Motorbike("BMW", 2);
 

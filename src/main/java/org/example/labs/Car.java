@@ -4,10 +4,10 @@ import org.example.labs.exceptions.DuplicateModelNameException;
 import org.example.labs.exceptions.ModelPriceOutOfBoundsException;
 import org.example.labs.exceptions.NoSuchModelNameException;
 
-import java.io.Serializable;
+import java.io.*;
 import java.util.Arrays;
 
-public class Car implements Transport, Serializable {
+public class Car implements Transport {
     //  поле типа String, хранящее марку автомобиля,
     private String mark;
     private Model[] models;
@@ -17,13 +17,24 @@ public class Car implements Transport, Serializable {
         this.mark = mark;
         this.models = new Model[modelsSize];
         for (int i = 0; i < modelsSize; i++) {
-            this.models[i] = new Model("name"+i, 0);
+            this.models[i] = new Model("name" + i, i + 1);
         }
     }
 
     public Car() {
     }
+/*
+    @Serial
+    public void writeObject(ObjectOutputStream oos) throws IOException {
+        oos.defaultWriteObject();
+    }
 
+    @Serial
+    public Car readObject(ObjectInputStream ois) throws ClassNotFoundException, IOException {
+        ois.defaultReadObject();
+        return this;
+    }
+*/
     @Override
     public int getModelsSize() {
         return this.models.length;
@@ -33,19 +44,12 @@ public class Car implements Transport, Serializable {
     public void addNewModel(String modelName, double price) throws DuplicateModelNameException {
         if (price <= 0) throw new ModelPriceOutOfBoundsException();
         else {
-            //int countEmptyModels = 0;
             for (Model model : this.models) {
                 if (model.modelName.equals(modelName)) throw new DuplicateModelNameException();
-              //  else if (model.modelName.isEmpty()) countEmptyModels++;
             }
 
-            //if (countEmptyModels == getModelsSize()) {
-              //  this.models = new Model[1];
-               // this.models[0] = new Model(modelName, price);
-            //} else {
-                this.models = Arrays.copyOf(this.models, getModelsSize() + 1);
-                this.models[getModelsSize() - 1] = new Model(modelName, price);
-           // }
+            this.models = Arrays.copyOf(this.models, getModelsSize() + 1);
+            this.models[getModelsSize() - 1] = new Model(modelName, price);
         }
     }
 
@@ -153,8 +157,16 @@ public class Car implements Transport, Serializable {
         this.mark = mark;
     }
 
+    @Override
+    public String toString() {
+        return "Car{" +
+                "mark='" + mark + '\'' +
+                ", models=" + Arrays.toString(models) +
+                '}';
+    }
+
     //  внутренний класс Модель, имеющий поля название модели и её цену, а также конструктор (класс Автомобиль хранит массив Моделей),
-    private class Model {
+    private class Model implements Serializable {
 
         private String modelName;
         private double price;
@@ -162,6 +174,17 @@ public class Car implements Transport, Serializable {
         Model(String modelName, double price) {
             this.modelName = modelName;
             this.price = price;
+        }
+
+        @Serial
+        public void writeObject(ObjectOutputStream oos) throws IOException {
+            oos.defaultWriteObject();
+        }
+
+        @Serial
+        public Model readObject(ObjectInputStream ois) throws ClassNotFoundException, IOException {
+            ois.defaultReadObject();
+            return this;
         }
     }
 }

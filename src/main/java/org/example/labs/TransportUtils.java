@@ -33,25 +33,29 @@ public class TransportUtils {
 
     //- записи информации о транспортном средстве в байтовый поток (использовать DataOutputStream)
     public static void outputTransport(Transport transport, OutputStream out) {
-        try (DataOutputStream dataOut = new DataOutputStream(out)) {
+        try {
+            DataOutputStream dataOut = new DataOutputStream(out);
             String className = transport.getClass().getSimpleName();
             dataOut.writeInt(className.length());
             dataOut.write(className.getBytes(StandardCharsets.UTF_8));
             dataOut.writeInt(transport.getMark().length());
             dataOut.write(transport.getMark().getBytes(StandardCharsets.UTF_8));
             dataOut.writeInt(transport.getModelsSize());
-            String[] allModels = transport.getAllModelNames();
-            for (String modelName : allModels) {
-                dataOut.writeInt(modelName.length());
-                dataOut.write(modelName.getBytes(StandardCharsets.UTF_8));
+            if (transport.getModelsSize() > 0) {
+                String[] allModels = transport.getAllModelNames();
+                for (String modelName : allModels) {
+                    dataOut.writeInt(modelName.length());
+                    dataOut.write(modelName.getBytes(StandardCharsets.UTF_8));
+                }
+                double[] allPrices = transport.getAllModelPrices();
+                for (double modelPrice : allPrices) {
+                    dataOut.writeDouble(modelPrice);
+                }
             }
-            double[] allPrices = transport.getAllModelPrices();
-            for (double modelPrice : allPrices) {
-                dataOut.writeDouble(modelPrice);
-            }
-            System.out.println("Success writing");
+            System.out.println("Success byte writing object");
+            dataOut.flush();
         } catch (IOException e) {
-            System.out.println("Failed writing transport from byte stream. " + e.getMessage());
+            System.out.println("Failed byte writing transport from byte stream. " + e.getMessage());
         }
     }
 
@@ -60,70 +64,70 @@ public class TransportUtils {
         DataInputStream dataIn = new DataInputStream(in);
         Transport transport = null;
         try {
-            switch (readString(dataIn)) {
-                case ("Car") -> transport = new Car();
-                case ("Motorbike") -> transport = new Motorbike();
-                default -> throw new ClassCastException("Failed casting");
+            String className = readString(dataIn);
+            if (className.isEmpty()) throw new ClassCastException("Failed casting");
+
+            String mark = readString(dataIn);
+
+            switch (className.toLowerCase()) {
+                case ("car") -> transport = new Car(mark, 0);
+                case ("motorbike") -> transport = new Motorbike(mark, 0);
             }
 
-            transport.setMark(readString(dataIn));
+            int modelsSize;
+            if ((modelsSize = dataIn.readInt()) > 0) {
+                String[] allModelNames = new String[modelsSize];
+                for (int i = 0; i < allModelNames.length; i++)
+                    allModelNames[i] = readString(dataIn);
 
-            int modelsSize = dataIn.readInt();
-            String[] allModelNames = new String[modelsSize];
-            for (int i = 0; i < allModelNames.length; i++)
-                allModelNames[i] = readString(dataIn);
+                double[] allModelPrices = new double[modelsSize];
+                for (int i = 0; i < allModelPrices.length; i++)
+                    allModelPrices[i] = dataIn.readDouble();
 
-            double[] allModelPrices = new double[modelsSize];
-            for (int i = 0; i < allModelPrices.length; i++)
-                allModelPrices[i] = dataIn.readDouble();
-
-            setModels(transport, allModelNames, allModelPrices);
-
-            System.out.println("Transport has class a " + transport.getClass().getSimpleName());
-            System.out.println(transport.getMark());
-            System.out.println(Arrays.toString(transport.getAllModelPrices()) + " ");
-        } catch (IOException e) {
-            System.out.println("Failed reading transport to byte stream. " + e.getMessage());
-            e.printStackTrace();
+                setModels(transport, allModelNames, allModelPrices);
+            }
+            System.out.println("Success byte reading object");
+        } catch (IOException | DuplicateModelNameException e) {
+            System.out.println("Failed byte reading transport from byte stream. " + e.getMessage());
         }
         return transport;
     }
 
     //- записи информации о транспортном средстве в символьный поток (использовать PrintWriter)
     public static void writeTransport(Transport v, Writer out) {
-        try (PrintWriter writer = new PrintWriter(out)) {
-            writer.println(v.getClass().getSimpleName());
-            writer.println(v.getMark());
-            writer.println(v.getModelsSize());
+        PrintWriter writer = new PrintWriter(out);
+        writer.println(v.getClass().getSimpleName());
+        writer.println(v.getMark());
+        writer.println(v.getModelsSize());
 
+        if (v.getModelsSize() > 0) {
             String[] modelNames = v.getAllModelNames();
-            for (String modelName : modelNames) {
+            for (String modelName : modelNames)
                 writer.println(modelName);
-            }
 
             double[] modelPrices = v.getAllModelPrices();
-            for (double modelPrice : modelPrices) {
+            for (double modelPrice : modelPrices)
                 writer.println(modelPrice);
-            }
-            System.out.println("Success writing");
         }
+        System.out.println("Success symbol writing object");
+        writer.flush();
     }
 
     //- чтения информации о транспортном средстве из символьного потока (использовать BufferedReader или StreamTokenizer)
     public static Transport readTransport(Reader in) {
         Transport transport = null;
-        try (BufferedReader reader = new BufferedReader(in)) {
-            if (reader.ready()) {
-                switch (reader.readLine()) {
-                    case ("Car") -> transport = new Car();
-                    case ("Motorbike") -> transport = new Motorbike();
-                    default -> throw new ClassCastException("Failed casting");
-                }
+        try {
+            BufferedReader reader = new BufferedReader(in);
+            String className = reader.readLine();
 
-                transport.setMark(reader.readLine());
+            String mark = reader.readLine();
+            switch (className.toLowerCase()) {
+                case ("car") -> transport = new Car(mark, 0);
+                case ("motorbike") -> transport = new Motorbike(mark, 0);
+            }
 
-                int modelsSize = Integer.parseInt(reader.readLine());
-
+            int modelsSize;
+            if ((modelsSize = Integer.parseInt(reader.readLine())) > 0) {
                 String[] allModelNames = new String[modelsSize];
                 for (int i = 0; i < allModelNames.length; i++)
                     allModelNames[i] = reader.readLine();
@@ -134,8 +138,9 @@ public class TransportUtils {
 
                 setModels(transport, allModelNames, allModelPrices);
             }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+            System.out.println("Success symbol reading object");
+        } catch (IOException | DuplicateModelNameException e) {
+            System.out.println("Failed symbol reading transport from byte stream. " + e.getMessage());
         }
         return transport;
     }
@@ -148,9 +153,8 @@ public class TransportUtils {
 
     private static void setModels(Transport transport, String[] models, double[] prices) throws DuplicateModelNameException {
         if (models.length == prices.length && models.length != 0) {
-            for (int i = 0; i < models.length; i++) {
+            for (int i = 0; i < models.length; i++)
                 transport.addNewModel(models[i], prices[i]);
-            }
         }
     }
 

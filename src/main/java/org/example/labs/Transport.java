@@ -3,7 +3,9 @@ package org.example.labs;
 import org.example.labs.exceptions.DuplicateModelNameException;
 import org.example.labs.exceptions.NoSuchModelNameException;
 
-public interface Transport {
+import java.io.Serializable;
+
+public interface Transport extends Serializable {
     //  1. метод для получения размера массива Моделей.
     int getModelsSize();
     //  2. метод добавления названия модели и её цены (путем создания нового массива Моделей), использовать метод Arrays.copyOf(),

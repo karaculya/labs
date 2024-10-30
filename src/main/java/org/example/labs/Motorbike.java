@@ -4,6 +4,7 @@ import org.example.labs.exceptions.DuplicateModelNameException;
 import org.example.labs.exceptions.ModelPriceOutOfBoundsException;
 import org.example.labs.exceptions.NoSuchModelNameException;
 
+import java.io.*;
 import java.util.Date;
 
 /*
@@ -15,21 +16,23 @@ import java.util.Date;
 public class Motorbike implements Transport {
     private int size;
     private Model head;
-    private long lastModified;
+    private transient long lastModified;
     private String mark;
+
     {
         this.head = new Model("headModel", null, null, 100);
         this.head.prev = this.head;
         this.head.next = this.head;
         this.lastModified = new Date().getTime();
     }
+
     public Motorbike(String mark, int size) {
         this.mark = mark;
         this.size = size;
         if (size > 1) {
             Model prev = null;
             for (int i = 0; i < size - 1; i++) {
-                Model currentModel = new Model("name" + i, null, null, i);
+                Model currentModel = new Model("name" + i, null, null, i + 1);
                 if (i == 0) {
                     this.head.prev = currentModel;
                     this.head.next = currentModel;
@@ -48,7 +51,18 @@ public class Motorbike implements Transport {
 
     public Motorbike() {
     }
+/*
+    @Serial
+    public void writeObject(ObjectOutputStream oos) throws IOException {
+        oos.defaultWriteObject();
+    }
 
+    @Serial
+    public Motorbike readObject(ObjectInputStream ois) throws ClassNotFoundException, IOException, DuplicateModelNameException {
+        ois.defaultReadObject();
+        return this;
+    }
+*/
     @Override
     public int getModelsSize() {
         return this.size;
@@ -68,9 +82,9 @@ public class Motorbike implements Transport {
                     if (currentModel.modelName.equals(modelName)) throw new DuplicateModelNameException();
                     currentModel = currentModel.next;
                 }
-                    Model newModel = new Model(modelName, this.head, this.head.prev, price);
-                    this.head.prev.next = newModel;
-                    this.head.prev = newModel;
+                Model newModel = new Model(modelName, this.head, this.head.prev, price);
+                this.head.prev.next = newModel;
+                this.head.prev = newModel;
             }
             this.size++;
         } else throw new ModelPriceOutOfBoundsException();
@@ -191,7 +205,41 @@ public class Motorbike implements Transport {
         this.mark = mark;
     }
 
-    private class Model {
+    public long getLastModified() {
+        return lastModified;
+    }
+
+    public void setLastModified(long lastModified) {
+        this.lastModified = lastModified;
+    }
+
+    public Model getHead() {
+        return head;
+    }
+
+    public void setHead(Model head) {
+        this.head = head;
+    }
+
+    public int getSize() {
+        return size;
+    }
+
+    public void setSize(int size) {
+        this.size = size;
+    }
+
+    @Override
+    public String toString() {
+        return "Motorbike{" +
+                "head=" + head +
+                ", size=" + size +
+                ", lastModified=" + lastModified +
+                ", mark='" + mark + '\'' +
+                '}';
+    }
+
+    private class Model implements Serializable {
         String modelName;
         double price;
         Model prev;
@@ -201,6 +249,57 @@ public class Motorbike implements Transport {
             this.modelName = modelName;
             this.next = next;
             this.prev = prev;
+            this.price = price;
+        }
+
+        @Serial
+        public void writeObject(ObjectOutputStream oos) throws IOException {
+            oos.defaultWriteObject();
+        }
+
+        @Serial
+        public Model readObject(ObjectInputStream ois) throws ClassNotFoundException, IOException {
+            ois.defaultReadObject();
+            return this;
+        }
+
+        @Override
+        public String toString() {
+            return "Model{" +
+                    "modelName='" + modelName + '\'' +
+                    ", price=" + price +
+                    '}';
+        }
+
+        public String getModelName() {
+            return modelName;
+        }
+
+        public void setModelName(String modelName) {
+            this.modelName = modelName;
+        }
+
+        public Model getNext() {
+            return next;
+        }
+
+        public void setNext(Model next) {
+            this.next = next;
+        }
+
+        public Model getPrev() {
+            return prev;
+        }
+
+        public void setPrev(Model prev) {
+            this.prev = prev;
+        }
+
+        public double getPrice() {
+            return price;
+        }
+
+        public void setPrice(double price) {
             this.price = price;
         }
     }

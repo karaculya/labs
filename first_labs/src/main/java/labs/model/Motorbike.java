@@ -1,8 +1,8 @@
-package org.example.labs;
+package main.java.labs.model;
 
-import org.example.labs.exceptions.DuplicateModelNameException;
-import org.example.labs.exceptions.ModelPriceOutOfBoundsException;
-import org.example.labs.exceptions.NoSuchModelNameException;
+import main.java.labs.exceptions.DuplicateModelNameException;
+import main.java.labs.exceptions.ModelPriceOutOfBoundsException;
+import main.java.labs.exceptions.NoSuchModelNameException;
 
 import java.io.*;
 import java.util.Date;
@@ -49,34 +49,22 @@ public class Motorbike implements Transport {
         }
     }
 
-/*
-    @Serial
-    public void writeObject(ObjectOutputStream oos) throws IOException {
-        oos.defaultWriteObject();
-    }
-
-    @Serial
-    public Motorbike readObject(ObjectInputStream ois) throws ClassNotFoundException, IOException, DuplicateModelNameException {
-        ois.defaultReadObject();
-        return this;
-    }
-*/
     @Override
-    public int getModelsSize() {
+    public int getSize() {
         return this.size;
     }
 
     @Override
     public void addNewModel(String modelName, double price) throws DuplicateModelNameException {
         if (price > 0) {
-            if (getModelsSize() == 0) {
+            if (this.getSize() == 0) {
                 this.head = new Model(modelName, null, null, price);
                 this.head.prev = this.head;
                 this.head.next = this.head;
             } else {
                 Model currentModel = this.head;
 
-                for (int i = 0; i < getModelsSize(); i++) {
+                for (int i = 0; i < this.getSize(); i++) {
                     if (currentModel.modelName.equals(modelName)) throw new DuplicateModelNameException();
                     currentModel = currentModel.next;
                 }
@@ -91,11 +79,11 @@ public class Motorbike implements Transport {
 
     @Override
     public void removeModel(String modelName) throws NoSuchModelNameException {
-        if (getModelsSize() == 0) throw new NoSuchModelNameException();
+        if (this.getSize() == 0) throw new NoSuchModelNameException();
         else {
             Model currentModel = this.head;
             int countIteration = 0;
-            for (int i = 0; i < getModelsSize(); i++) {
+            for (int i = 0; i < this.getSize(); i++) {
                 if (currentModel.modelName.equals(modelName)) {
                     currentModel.prev.next = currentModel.next;
                     currentModel.next.prev = currentModel.prev;
@@ -109,17 +97,17 @@ public class Motorbike implements Transport {
                 currentModel = currentModel.next;
             }
 
-            if (countIteration == getModelsSize()) throw new NoSuchModelNameException();
+            if (countIteration == this.getSize()) throw new NoSuchModelNameException();
         }
         this.size--;
         this.lastModified = new Date().getTime();
     }
 
     @Override
-    public String[] getAllModelNames() {
-        String[] allModels = new String[getModelsSize()];
+    public String[] getModels() {
+        String[] allModels = new String[this.getSize()];
         Model currentModel = this.head;
-        for (int i = 0; i < getModelsSize(); i++) {
+        for (int i = 0; i < this.getSize(); i++) {
             allModels[i] = currentModel.modelName;
             currentModel = currentModel.next;
         }
@@ -127,10 +115,10 @@ public class Motorbike implements Transport {
     }
 
     @Override
-    public double[] getAllModelPrices() {
-        double[] allPrices = new double[getModelsSize()];
+    public double[] getPrices() {
+        double[] allPrices = new double[this.getSize()];
         Model currentModel = this.head;
-        for (int i = 0; i < getModelsSize(); i++) {
+        for (int i = 0; i < this.getSize(); i++) {
             allPrices[i] = currentModel.price;
             currentModel = currentModel.next;
         }
@@ -143,11 +131,11 @@ public class Motorbike implements Transport {
             if (this.head == null) throw new NoSuchModelNameException();
 
             Model currentModel = this.head;
-            for (int i = 0; i < getModelsSize(); i++) {
+            for (int i = 0; i < this.getSize(); i++) {
                 if (currentModel.modelName.equals(name)) {
                     currentModel.price = newPrice;
                     break;
-                } else if (i == getModelsSize() - 1 && !currentModel.modelName.equals(name))
+                } else if (i == this.getSize() - 1 && !currentModel.modelName.equals(name))
                     throw new NoSuchModelNameException();
 
                 currentModel = currentModel.next;
@@ -158,11 +146,11 @@ public class Motorbike implements Transport {
 
     @Override
     public double getPriceByModelName(String name) throws NoSuchModelNameException {
-        if (getModelsSize() > 0) {
+        if (this.getSize() > 0) {
             Model currentModel = this.head;
-            for (int i = 0; i < getModelsSize(); i++) {
+            for (int i = 0; i < this.getSize(); i++) {
                 if (currentModel.modelName.equals(name)) return currentModel.price;
-                else if (i == getModelsSize() - 1 && !currentModel.modelName.equals(name))
+                else if (i == this.getSize() - 1 && !currentModel.modelName.equals(name))
                     throw new NoSuchModelNameException();
 
                 currentModel = currentModel.next;
@@ -178,7 +166,7 @@ public class Motorbike implements Transport {
         else {
             Model currentModel = this.head;
             Model searchModel = null;
-            for (int i = 0; i < getModelsSize(); i++) {
+            for (int i = 0; i < this.getSize(); i++) {
                 if (currentModel.modelName.equals(newName))
                     throw new DuplicateModelNameException();
                 else if (currentModel.modelName.equals(oldName))
@@ -217,10 +205,6 @@ public class Motorbike implements Transport {
 
     public void setHead(Model head) {
         this.head = head;
-    }
-
-    public int getSize() {
-        return size;
     }
 
     public void setSize(int size) {

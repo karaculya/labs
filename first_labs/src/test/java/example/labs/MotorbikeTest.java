@@ -1,7 +1,8 @@
-package org.example.labs;
+package test.java.example.labs;
 
-import org.example.labs.exceptions.DuplicateModelNameException;
-import org.example.labs.exceptions.NoSuchModelNameException;
+import main.java.labs.exceptions.NoSuchModelNameException;
+import main.java.labs.model.Motorbike;
+import main.java.labs.exceptions.DuplicateModelNameException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -19,12 +20,12 @@ class MotorbikeTest {
 
     @Test
     void getModelsSize() {
-        assertEquals(1, motorbike.getModelsSize());
+        assertEquals(1, motorbike.getSize());
     }
 
     @Test
     void addNewModel() throws NoSuchModelNameException {
-        assertEquals(1, motorbike.getModelsSize());
+        assertEquals(1, motorbike.getSize());
         assertEquals(50.0, motorbike.getPriceByModelName("model1"));
         assertThrows(DuplicateModelNameException.class,
                 () -> motorbike.addNewModel("model1", 60.0));
@@ -37,7 +38,7 @@ class MotorbikeTest {
 
         motorbike.removeModel("model1");
 
-        assertEquals(0, motorbike.getModelsSize());
+        assertEquals(0, motorbike.getSize());
         assertThrows(NoSuchModelNameException.class,
                 () -> motorbike.getPriceByModelName("model1"));
     }
@@ -48,7 +49,7 @@ class MotorbikeTest {
         motorbike.addNewModel("model3", 30.0);
 
         String[] exceptedModelNames = {"model1", "model2", "model3"};
-        String[] actualModelNames = motorbike.getAllModelNames();
+        String[] actualModelNames = motorbike.getModels();
         assertEquals(exceptedModelNames.length, actualModelNames.length);
         for (int i = 0; i < exceptedModelNames.length; i++) {
             assertEquals(exceptedModelNames[i], actualModelNames[i]);
@@ -61,7 +62,7 @@ class MotorbikeTest {
         motorbike.addNewModel("model3", 30.0);
 
         double[] expectedModelPrices = {50.0, 20.0, 30.0};
-        double[] actualModelPrices = motorbike.getAllModelPrices();
+        double[] actualModelPrices = motorbike.getPrices();
         assertEquals(expectedModelPrices.length, actualModelPrices.length);
 
         for (int i = 0; i < expectedModelPrices.length; i++) {

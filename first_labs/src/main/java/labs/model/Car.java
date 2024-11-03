@@ -1,8 +1,9 @@
-package org.example.labs;
+package main.java.labs.model;
 
-import org.example.labs.exceptions.DuplicateModelNameException;
-import org.example.labs.exceptions.ModelPriceOutOfBoundsException;
-import org.example.labs.exceptions.NoSuchModelNameException;
+
+import main.java.labs.exceptions.DuplicateModelNameException;
+import main.java.labs.exceptions.ModelPriceOutOfBoundsException;
+import main.java.labs.exceptions.NoSuchModelNameException;
 
 import java.io.*;
 import java.util.Arrays;
@@ -34,7 +35,7 @@ public class Car implements Transport {
     }
 */
     @Override
-    public int getModelsSize() {
+    public int getSize() {
         return this.models.length;
     }
 
@@ -46,26 +47,26 @@ public class Car implements Transport {
                 if (model.modelName.equals(modelName)) throw new DuplicateModelNameException();
             }
 
-            this.models = Arrays.copyOf(this.models, getModelsSize() + 1);
-            this.models[getModelsSize() - 1] = new Model(modelName, price);
+            this.models = Arrays.copyOf(this.models, getSize() + 1);
+            this.models[getSize() - 1] = new Model(modelName, price);
         }
     }
 
     @Override
     public void removeModel(String modelName) throws NoSuchModelNameException {
-        if ((getModelsSize() == 1 && !this.models[0].modelName.equals(modelName))
-                || getModelsSize() == 0)
+        if ((getSize() == 1 && !this.models[0].modelName.equals(modelName))
+                || getSize() == 0)
             throw new NoSuchModelNameException();
-        else if (getModelsSize() == 1 && this.models[0].modelName.equals(modelName))
+        else if (getSize() == 1 && this.models[0].modelName.equals(modelName))
             this.models = new Model[0];
         else {
             boolean isContains = false;
 
-            for (int i = 0; i < getModelsSize(); i++) {
+            for (int i = 0; i < getSize(); i++) {
                 if (models[i].modelName.equals(modelName)) {
                     isContains = true;
-                    System.arraycopy(models, i + 1, models, i, getModelsSize() - i - 1);
-                    models = Arrays.copyOf(models, getModelsSize() - 1);
+                    System.arraycopy(models, i + 1, models, i, getSize() - i - 1);
+                    models = Arrays.copyOf(models, getSize() - 1);
                     break;
                 }
             }
@@ -75,25 +76,9 @@ public class Car implements Transport {
     }
 
     @Override
-    public String[] getAllModelNames() {
-        String[] allModelNames = new String[getModelsSize()];
-        for (int i = 0; i < getModelsSize(); i++)
-            allModelNames[i] = models[i].modelName;
-        return allModelNames;
-    }
-
-    @Override
-    public double[] getAllModelPrices() {
-        double[] array = new double[getModelsSize()];
-        for (int i = 0; i < getModelsSize(); i++)
-            array[i] = models[i].price;
-        return array;
-    }
-
-    @Override
     public void setPriceByModelName(String name, double newPrice) throws NoSuchModelNameException {
         if (newPrice > 0) {
-            if (getModelsSize() >= 1) {
+            if (getSize() >= 1) {
                 boolean isContains = false;
 
                 for (Model model : models) {
@@ -113,13 +98,13 @@ public class Car implements Transport {
 
     @Override
     public double getPriceByModelName(String name) throws NoSuchModelNameException {
-        if (getModelsSize() >= 1) {
+        if (getSize() >= 1) {
             int countIteration = 0;
             for (Model model : models) {
                 if (model.modelName.equals(name)) return model.price;
                 else countIteration++;
             }
-            if (countIteration == getModelsSize()) throw new NoSuchModelNameException();
+            if (countIteration == getSize()) throw new NoSuchModelNameException();
         }
         throw new NoSuchModelNameException();
     }
@@ -127,11 +112,11 @@ public class Car implements Transport {
     @Override
     public void setModelName(String oldName, String newName) throws NoSuchModelNameException, DuplicateModelNameException {
         if (oldName.equals(newName)) throw new DuplicateModelNameException();
-        if (getModelsSize() >= 1) {
+        if (getSize() >= 1) {
             boolean isContains = false;
             int index = 0;
 
-            for (int i = 0; i < getModelsSize(); i++) {
+            for (int i = 0; i < getSize(); i++) {
                 if (models[i].modelName.equals(newName)) throw new DuplicateModelNameException();
                 else if (models[i].modelName.equals(oldName)) {
                     index = i;
@@ -153,6 +138,22 @@ public class Car implements Transport {
     @Override
     public void setMark(String mark) {
         this.mark = mark;
+    }
+
+    @Override
+    public double[] getPrices() {
+        double[] array = new double[getSize()];
+        for (int i = 0; i < getSize(); i++)
+            array[i] = models[i].price;
+        return array;
+    }
+
+    @Override
+    public String[] getModels() {
+        String[] allModelNames = new String[getSize()];
+        for (int i = 0; i < getSize(); i++)
+            allModelNames[i] = models[i].modelName;
+        return allModelNames;
     }
 
     @Override

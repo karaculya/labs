@@ -1,31 +1,33 @@
-package org.example.labs;
+package main.java.labs.utils;
 
-import org.example.labs.exceptions.DuplicateModelNameException;
+import main.java.labs.exceptions.DuplicateModelNameException;
+import main.java.labs.model.Car;
+import main.java.labs.model.Motorbike;
+import main.java.labs.model.Transport;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 
 public class TransportUtils {
 
     public static double avg(Transport transport) {
         double count = 0;
-        double[] allModelPrices = transport.getAllModelPrices();
+        double[] allModelPrices = transport.getPrices();
         for (double price : allModelPrices) {
             count += price;
         }
-        return count / transport.getModelsSize();
+        return count / transport.getSize();
     }
 
     public static void printAllModelNames(Transport transport) {
-        String[] allModelNames = transport.getAllModelNames();
+        String[] allModelNames = transport.getModels();
         for (String modelName : allModelNames) {
             System.out.println(modelName);
         }
     }
 
     public static void printAllModelPrices(Transport transport) {
-        double[] allModelPrices = transport.getAllModelPrices();
+        double[] allModelPrices = transport.getPrices();
         for (double modelPrice : allModelPrices) {
             System.out.println(modelPrice);
         }
@@ -40,14 +42,14 @@ public class TransportUtils {
             dataOut.write(className.getBytes(StandardCharsets.UTF_8));
             dataOut.writeInt(transport.getMark().length());
             dataOut.write(transport.getMark().getBytes(StandardCharsets.UTF_8));
-            dataOut.writeInt(transport.getModelsSize());
-            if (transport.getModelsSize() > 0) {
-                String[] allModels = transport.getAllModelNames();
+            dataOut.writeInt(transport.getSize());
+            if (transport.getSize() > 0) {
+                String[] allModels = transport.getModels();
                 for (String modelName : allModels) {
                     dataOut.writeInt(modelName.length());
                     dataOut.write(modelName.getBytes(StandardCharsets.UTF_8));
                 }
-                double[] allPrices = transport.getAllModelPrices();
+                double[] allPrices = transport.getPrices();
                 for (double modelPrice : allPrices) {
                     dataOut.writeDouble(modelPrice);
                 }
@@ -98,14 +100,14 @@ public class TransportUtils {
         PrintWriter writer = new PrintWriter(out);
         writer.println(v.getClass().getSimpleName());
         writer.println(v.getMark());
-        writer.println(v.getModelsSize());
+        writer.println(v.getSize());
 
-        if (v.getModelsSize() > 0) {
-            String[] modelNames = v.getAllModelNames();
+        if (v.getSize() > 0) {
+            String[] modelNames = v.getModels();
             for (String modelName : modelNames)
                 writer.println(modelName);
 
-            double[] modelPrices = v.getAllModelPrices();
+            double[] modelPrices = v.getPrices();
             for (double modelPrice : modelPrices)
                 writer.println(modelPrice);
         }

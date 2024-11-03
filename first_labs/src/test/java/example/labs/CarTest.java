@@ -1,17 +1,15 @@
-package org.example.labs;
+package test.java.example.labs;
 
-import org.example.labs.exceptions.DuplicateModelNameException;
-import org.example.labs.exceptions.NoSuchModelNameException;
+import main.java.labs.exceptions.DuplicateModelNameException;
+import main.java.labs.exceptions.NoSuchModelNameException;
+import main.java.labs.model.Car;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 class CarTest {
     private Car car;
@@ -24,14 +22,14 @@ class CarTest {
 
     @Test
     void getModelsSize() {
-        assertEquals(1, car.getModelsSize());
+        assertEquals(1, car.getSize());
     }
 
     @Test
     void addNewModel() throws DuplicateModelNameException, NoSuchModelNameException {
         car.addNewModel("Camry 3 and 5", 30.0);
 
-        assertEquals(2, car.getModelsSize());
+        assertEquals(2, car.getSize());
         assertTrue(car.getPriceByModelName("Camry 3 and 5") == 30);
 
         assertThrows(DuplicateModelNameException.class,
@@ -44,21 +42,21 @@ class CarTest {
                 () -> car.removeModel("Toyota Camry 35"));
 
         car.removeModel("Toyota Camry");
-        assertEquals(0, car.getModelsSize());
+        assertEquals(0, car.getSize());
     }
 
     @Test
     void getAllModelNames() throws DuplicateModelNameException {
         car.addNewModel("Toyota Land Cruiser", 40.0);
 
-        assertEquals(List.of("Toyota Camry", "Toyota Land Cruiser"), Arrays.stream(car.getAllModelNames()).toList());
+        assertEquals(List.of("Toyota Camry", "Toyota Land Cruiser"), Arrays.stream(car.getModels()).toList());
     }
 
     @Test
     void getAllModelPrices() throws DuplicateModelNameException {
         car.addNewModel("Toyota Land Cruiser", 40.0);
 
-        double[] expected = car.getAllModelPrices();
+        double[] expected = car.getPrices();
         double[] array = new double[]{30.0, 40.0};
         for (int i = 0; i < array.length; i++) {
             assertTrue(expected[i] == array[i]);
@@ -83,7 +81,7 @@ class CarTest {
     void setModelName() throws NoSuchModelNameException, DuplicateModelNameException {
         car.setModelName("Toyota Camry", "Camry 3 and 5");
 
-        String[] models = car.getAllModelNames();
+        String[] models = car.getModels();
         boolean isContainsToyotaCamry = false;
         boolean isContainsCamry3And5 = false;
         for (String model : models) {

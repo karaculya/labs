@@ -1,9 +1,9 @@
 package org.example;
 
-import org.example.labs.Car;
-import org.example.labs.Motorbike;
-import org.example.labs.Transport;
-import org.example.labs.TransportUtils;
+import org.example.labs.model.Car;
+import org.example.labs.model.Motorbike;
+import org.example.labs.model.Transport;
+import org.example.labs.utils.TransportUtils;
 import org.example.labs.exceptions.DuplicateModelNameException;
 import org.example.labs.exceptions.NoSuchModelNameException;
 

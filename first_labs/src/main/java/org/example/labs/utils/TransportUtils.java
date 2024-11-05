@@ -1,10 +1,13 @@
-package org.example.labs;
+package org.example.labs.utils;
 
 import org.example.labs.exceptions.DuplicateModelNameException;
+import org.example.labs.exceptions.NoSuchModelNameException;
+import org.example.labs.model.Car;
+import org.example.labs.model.Motorbike;
+import org.example.labs.model.Transport;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 
 public class TransportUtils {
 

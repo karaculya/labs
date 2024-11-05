@@ -1,4 +1,4 @@
-package org.example.labs;
+package org.example.labs.model;
 
 import org.example.labs.exceptions.DuplicateModelNameException;
 import org.example.labs.exceptions.NoSuchModelNameException;

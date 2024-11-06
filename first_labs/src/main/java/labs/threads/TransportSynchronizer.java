@@ -21,7 +21,7 @@ public class TransportSynchronizer {
             while (!set)
                 lock.wait();
             val = p[current++];
-            System.out.println("Print price: " + val);
+            System.out.println("2. Print price: " + val);
             set = false;
             lock.notifyAll();
         }
@@ -34,7 +34,7 @@ public class TransportSynchronizer {
             if (!canPrintModel()) throw new InterruptedException();
             while (set)
                 lock.wait();
-            System.out.println("Print model: " + s[current]);
+            System.out.println("2. Print model: " + s[current]);
             set = true;
             lock.notifyAll();
         }

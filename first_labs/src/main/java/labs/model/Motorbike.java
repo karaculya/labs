@@ -20,7 +20,7 @@ public class Motorbike implements Transport {
     private String mark;
 
     {
-        this.head = new Model("headModel", null, null, 100);
+        this.head = new Model("headModel", null, null, 101);
         this.head.prev = this.head;
         this.head.next = this.head;
         this.lastModified = new Date().getTime();
@@ -32,7 +32,7 @@ public class Motorbike implements Transport {
         if (size > 1) {
             Model prev = null;
             for (int i = 0; i < size - 1; i++) {
-                Model currentModel = new Model("name" + i, null, null, i + 1);
+                Model currentModel = new Model("name" + (i + 1), null, null, i + 1);
                 if (i == 0) {
                     this.head.prev = currentModel;
                     this.head.next = currentModel;

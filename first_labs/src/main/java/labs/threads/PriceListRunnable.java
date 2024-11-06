@@ -18,7 +18,7 @@ public class PriceListRunnable implements Runnable {
             reentrantLock.lock();
 
             for (double price : prices) {
-                System.out.println(price);
+                System.out.println("3. " + price);
             }
         } finally {
             reentrantLock.unlock();

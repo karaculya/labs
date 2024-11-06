@@ -18,7 +18,7 @@ public class NameListRunnable implements Runnable {
             reentrantLock.lock();
 
             for (String name : names) {
-                System.out.println(name);
+                System.out.println("3. " + name);
             }
         } finally {
             reentrantLock.unlock();

@@ -15,6 +15,6 @@ public class PriceThread extends Thread {
         if (!Thread.interrupted()) {
             TransportUtils.printAllModelPrices(transport);
         }
-        System.out.println("PriceThread is over");
+        System.out.println("1. PriceThread is over");
     }
 }

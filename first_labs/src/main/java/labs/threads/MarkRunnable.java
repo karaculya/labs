@@ -10,6 +10,6 @@ public class MarkRunnable implements Runnable {
 
     @Override
     public void run() {
-        System.out.println(mark);
+        System.out.println("4. " + mark);
     }
 }

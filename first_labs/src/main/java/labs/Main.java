@@ -5,40 +5,38 @@ import main.java.labs.exceptions.NoSuchModelNameException;
 import main.java.labs.model.Car;
 import main.java.labs.model.Motorbike;
 import main.java.labs.model.Transport;
-import main.java.labs.threads.CarCreator;
+import main.java.labs.threads.*;
 
 import java.io.IOException;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class Main {
     public static void main(String[] args) throws DuplicateModelNameException, NoSuchModelNameException, IOException, ClassNotFoundException, InterruptedException {
-        Transport car = new Car("Toyota", 0);
-        Transport moto = new Motorbike("BMW", 0);
-
-        for (int i = 0; i < 100; i++) {
-            car.addNewModel("model" + i, i + 1);
-            moto.addNewModel("model" + i, i + 1);
-        }
+        Transport car = new Car("Toyota", 10);
+        Transport moto = new Motorbike("BMW", 10);
 
         /* Task 1
         Thread nameThread = new NameThread(moto);
-        nameThread.setPriority(1);
+        nameThread.setPriority(Thread.MAX_PRIORITY);
 
         Thread priceThread = new PriceThread(moto);
-        priceThread.setPriority(10);
+        priceThread.setPriority(Thread.MIN_PRIORITY);
 
         nameThread.start();
         priceThread.start();
          */
 
-         /* Task 2
+//         /* Task 2
          TransportSynchronizer transportSynchronizer = new TransportSynchronizer(car);
-        Thread thread = new Thread(new NameRunnable(car.getSize(), transportSynchronizer));
+        Thread thread = new Thread(new NameRunnable(transportSynchronizer));
         thread.start();
-        Thread thread1 = new Thread(new PriceRunnable(car.getSize(), transportSynchronizer));
+        Thread thread1 = new Thread(new PriceRunnable(transportSynchronizer));
         thread1.start();
-          */
+//          */
 
         /* Task 3
         ReentrantLock reentrantLock = new ReentrantLock();
@@ -61,7 +59,7 @@ public class Main {
         threadPool.shutdown();
          */
 
-//        /* Task 5
+        /* Task 5
         BlockingQueue queue = new ArrayBlockingQueue(2);
         String[] files = {"first_labs\\src\\main\\resources\\1.txt",
                 "first_labs\\src\\main\\resources\\2.txt",
@@ -76,8 +74,8 @@ public class Main {
         Thread.sleep(1000);
 
         while (!queue.isEmpty()) {
-            System.out.println(queue.take());
+            System.out.println("5. " + queue.take());
         }
-//         */
+         */
     }
 }

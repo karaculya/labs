@@ -25,13 +25,9 @@ public class CarCreator implements Runnable {
             BufferedReader reader = new BufferedReader(new FileReader(fileName));
             while (reader.ready()) {
                 String mark = reader.readLine();
-                queue.put(new Car(mark, 0));
+                queue.add(new Car(mark, 0));
             }
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
         } catch (IOException e) {
-            throw new RuntimeException(e);
-        } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
     }

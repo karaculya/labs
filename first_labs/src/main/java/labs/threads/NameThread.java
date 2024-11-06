@@ -15,6 +15,6 @@ public class NameThread extends Thread {
         if (!Thread.interrupted()) {
             TransportUtils.printAllModelNames(transport);
         }
-        System.out.println("NameThread is over");
+        System.out.println("1. NameThread is over");
     }
 }

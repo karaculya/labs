@@ -18,7 +18,7 @@ public class Car implements Transport {
         this.mark = mark;
         this.models = new Model[modelsSize];
         for (int i = 0; i < modelsSize; i++) {
-            this.models[i] = new Model("name" + i, i + 1);
+            this.models[i] = new Model("name" + (i + 1), i + 1);
         }
     }
 

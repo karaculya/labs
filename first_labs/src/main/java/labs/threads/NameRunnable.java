@@ -11,14 +11,8 @@ public class NameRunnable implements Runnable {
     @Override
     public void run() {
         try {
-            // while
             while (transportSynchronizer.canPrintModel())
                 transportSynchronizer.printModel();
-
-//            for (int i = 0; i < modelSize; i++) {
-//                if (transportSynchronizer.canPrintModel())
-//                    transportSynchronizer.printModel();
-//            }
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }

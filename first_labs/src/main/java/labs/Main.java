@@ -31,7 +31,7 @@ public class Main {
          */
 
 //         /* Task 2
-         TransportSynchronizer transportSynchronizer = new TransportSynchronizer(car);
+        TransportSynchronizer transportSynchronizer = new TransportSynchronizer(car);
         Thread thread = new Thread(new NameRunnable(transportSynchronizer));
         thread.start();
         Thread thread1 = new Thread(new PriceRunnable(transportSynchronizer));

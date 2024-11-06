@@ -1,11 +1,11 @@
-package org.example;
+package main.java;
 
-import org.example.labs.model.Car;
-import org.example.labs.model.Motorbike;
-import org.example.labs.model.Transport;
-import org.example.labs.utils.TransportUtils;
-import org.example.labs.exceptions.DuplicateModelNameException;
-import org.example.labs.exceptions.NoSuchModelNameException;
+import main.java.labs.model.Car;
+import main.java.labs.model.Motorbike;
+import main.java.labs.model.Transport;
+import main.java.labs.utils.TransportUtils;
+import main.java.labs.exceptions.DuplicateModelNameException;
+import main.java.labs.exceptions.NoSuchModelNameException;
 
 import java.io.*;
 

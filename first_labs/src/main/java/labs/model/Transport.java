@@ -1,7 +1,7 @@
-package org.example.labs.model;
+package main.java.labs.model;
 
-import org.example.labs.exceptions.DuplicateModelNameException;
-import org.example.labs.exceptions.NoSuchModelNameException;
+import main.java.labs.exceptions.DuplicateModelNameException;
+import main.java.labs.exceptions.NoSuchModelNameException;
 
 import java.io.Serializable;
 

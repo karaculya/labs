@@ -1,7 +1,7 @@
-package org.example.labs.lr4.srv.gradual;
+package main.java.labs.srv.gradual;
 
-import org.example.labs.model.Transport;
-import org.example.labs.utils.TransportUtils;
+import main.java.labs.model.Transport;
+import main.java.labs.utils.TransportUtils;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;

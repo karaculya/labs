@@ -1,10 +1,9 @@
-package org.example.labs.utils;
+package main.java.labs.utils;
 
-import org.example.labs.exceptions.DuplicateModelNameException;
-import org.example.labs.exceptions.NoSuchModelNameException;
-import org.example.labs.model.Car;
-import org.example.labs.model.Motorbike;
-import org.example.labs.model.Transport;
+import main.java.labs.exceptions.DuplicateModelNameException;
+import main.java.labs.model.Car;
+import main.java.labs.model.Motorbike;
+import main.java.labs.model.Transport;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -159,6 +158,15 @@ public class TransportUtils {
             for (int i = 0; i < models.length; i++)
                 transport.addNewModel(models[i], prices[i]);
         }
+    }
+
+    public static double getAverage(Transport[] transports) {
+        double sum = 0, count = 0;
+        for (Transport transport : transports) {
+            sum = TransportUtils.avg(transport);
+            count++;
+        }
+        return sum / count;
     }
 
 /*

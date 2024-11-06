@@ -18,8 +18,6 @@ public class ProcessThread implements Runnable {
     @Override
     public void run() {
         try {
-            System.out.println("Соединение с клиентом установлено");
-            System.out.println("Запускаем выполнение программы");
             ObjectInputStream objectInputStream = new ObjectInputStream(clientSocket.getInputStream());
             ObjectOutputStream objectOutputStream = new ObjectOutputStream(clientSocket.getOutputStream());
 
@@ -31,12 +29,10 @@ public class ProcessThread implements Runnable {
             }
 
             double avg = TransportUtils.getAverage(transports);
-
             objectOutputStream.writeDouble(avg);
-            System.out.println("Среднее арифметическое цен моделей = " + avg);
+            System.out.println("\nAverage price = " + avg);
 
             objectOutputStream.flush();
-            System.out.println("Значение передано на сторону клиента...");
         } catch (IOException | ClassNotFoundException e) {
             throw new RuntimeException(e);
         }

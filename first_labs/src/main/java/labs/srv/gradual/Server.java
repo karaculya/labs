@@ -43,7 +43,7 @@ public class Server {
                 System.out.println(transport.toString());
             }
 
-            double avg = getAvgFromArray(transports);
+            double avg = TransportUtils.getAverage(transports);
             objectOutputStream.writeDouble(avg);
 
             System.out.println("\nAverage price = " + avg);
@@ -55,15 +55,5 @@ public class Server {
             objectOutputStream.close();
             clientSocket.close();
         }
-    }
-
-    private static double getAvgFromArray(Transport[] transports) {
-        double sum = 0;
-        int count = 0;
-        for (Transport transport : transports) {
-            sum += TransportUtils.avg(transport);
-            count++;
-        }
-        return sum/ count;
     }
 }

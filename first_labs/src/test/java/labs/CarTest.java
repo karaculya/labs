@@ -1,8 +1,8 @@
-package org.example.labs;
+package test.java.labs;
 
-import org.example.labs.exceptions.DuplicateModelNameException;
-import org.example.labs.exceptions.NoSuchModelNameException;
-import org.example.labs.model.Car;
+import main.java.labs.exceptions.DuplicateModelNameException;
+import main.java.labs.exceptions.NoSuchModelNameException;
+import main.java.labs.model.Car;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

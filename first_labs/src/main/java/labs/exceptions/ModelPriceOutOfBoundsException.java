@@ -1,4 +1,4 @@
-package org.example.labs.exceptions;
+package main.java.labs.exceptions;
 
 //задание неверной цены модели ModelPriceOutOfBoundsException (необъявляемое)
 public class ModelPriceOutOfBoundsException extends RuntimeException {

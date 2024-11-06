@@ -1,8 +1,10 @@
-package org.example.labs.lr4.client;
+package main.java;
 
-import org.example.labs.model.Car;
-import org.example.labs.model.Motorbike;
-import org.example.labs.model.Transport;
+import main.java.labs.exceptions.DuplicateModelNameException;
+import main.java.labs.exceptions.NoSuchModelNameException;
+import main.java.labs.model.Car;
+import main.java.labs.model.Motorbike;
+import main.java.labs.model.Transport;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -10,8 +12,8 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
-public class Client {
-    public static void main(String[] args) throws IOException {
+public class Main {
+    public static void main(String[] args) throws DuplicateModelNameException, NoSuchModelNameException, IOException, ClassNotFoundException {
         Transport[] transports = {
                 new Car("BMW", 2),
                 new Car("Audi", 3),

@@ -1,10 +1,9 @@
-package org.example.labs.utils;
+package main.java.labs.utils;
 
-import org.example.labs.exceptions.DuplicateModelNameException;
-import org.example.labs.exceptions.NoSuchModelNameException;
-import org.example.labs.model.Car;
-import org.example.labs.model.Motorbike;
-import org.example.labs.model.Transport;
+import main.java.labs.exceptions.DuplicateModelNameException;
+import main.java.labs.model.Car;
+import main.java.labs.model.Motorbike;
+import main.java.labs.model.Transport;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;

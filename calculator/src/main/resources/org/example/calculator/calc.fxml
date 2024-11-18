@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<VBox alignment="CENTER" prefHeight="400.0" prefWidth="300.0" spacing="5.0" style="-fx-background-color: 141416; -fx-border-color: FFFFFF;" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.calculator.CalculatorController">
+    <padding>
+        <Insets bottom="10.0" left="20.0" right="20.0" top="10.0" />
+    </padding>
+   <Label fx:id="displayLbl" alignment="CENTER_RIGHT" contentDisplay="RIGHT" layoutX="31.0" layoutY="45.0" prefHeight="30.0" prefWidth="280.0" textAlignment="RIGHT" textFill="#989292">
+      <font>
+         <Font name="Britannic Bold" size="18.0" />
+      </font>
+   </Label>
+    <FlowPane hgap="15.0" prefHeight="271.0" prefWidth="302.0" prefWrapLength="100.0" vgap="5.0">
+        <children>
+            <Button fx:id="btnClear" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onKeyPressed="#onSymbolKeyBoard" onMouseClicked="#onClearBtnClicked" prefHeight="50.0" prefWidth="50.0" text="C">
+                <font>
+                    <Font name="Britannic Bold" size="18.0" />
+                </font>
+            </Button>
+            <Button fx:id="btnPow" mnemonicParsing="false" onKeyPressed="#onSymbolKeyBoard" onMouseClicked="#onSymbolClicked" prefHeight="50.0" prefWidth="50.0" text="^">
+                <font>
+                    <Font name="Britannic Bold" size="18.0" />
+                </font>
+            </Button>
+            <Button fx:id="btnSqrt" layoutX="206.0" layoutY="10.0" mnemonicParsing="false" onKeyPressed="#onSymbolKeyBoard" onMouseClicked="#onSymbolClicked" prefHeight="50.0" prefWidth="50.0" text="√">
+                <font>
+                    <Font name="Britannic Bold" size="18.0" />
+                </font>
+            </Button>
+            <Button fx:id="btnDivide" layoutX="75.0" layoutY="262.0" mnemonicParsing="false" onKeyPressed="#onSymbolKeyBoard" onMouseClicked="#onSymbolClicked" prefHeight="50.0" prefWidth="50.0" text="/" textFill="#fe7e27">
+                <font>
+                    <Font name="Britannic Bold" size="18.0" />
+                </font>
+            </Button>
+            <Button fx:id="btn7" mnemonicParsing="false" onKeyPressed="#onNumberKeyBoard" onMouseClicked="#onNumberClicked" prefHeight="50.0" prefWidth="50.0" text="7" textAlignment="CENTER">
+                <font>
+                    <Font name="Britannic Bold" size="18.0" />
+                </font></Button>
+            <Button fx:id="btn8" mnemonicParsing="false" onKeyPressed="#onNumberKeyBoard" onMouseClicked="#onNumberClicked" prefHeight="50.0" prefWidth="50.0" text="8">
+                <font>
+                    <Font name="Britannic Bold" size="18.0" />
+                </font></Button>
+            <Button fx:id="btn9" mnemonicParsing="false" onKeyPressed="#onNumberKeyBoard" onMouseClicked="#onNumberClicked" prefHeight="50.0" prefWidth="50.0" text="9">
+                <font>
+                    <Font name="Britannic Bold" size="18.0" />
+                </font></Button>
+            <Button fx:id="btnMultiply" mnemonicParsing="false" onKeyPressed="#onSymbolKeyBoard" onMouseClicked="#onSymbolClicked" prefHeight="50.0" prefWidth="50.0" text="*" textAlignment="CENTER" textFill="#fe7e27">
+                <font>
+                    <Font name="Britannic Bold" size="18.0" />
+                </font></Button>
+            <Button fx:id="btn4" mnemonicParsing="false" onKeyPressed="#onNumberKeyBoard" onMouseClicked="#onNumberClicked" prefHeight="50.0" prefWidth="50.0" text="4">
+                <font>
+                    <Font name="Britannic Bold" size="18.0" />
+                </font></Button>
+            <Button fx:id="btn5" layoutX="10.0" layoutY="96.0" mnemonicParsing="false" onKeyPressed="#onNumberKeyBoard" onMouseClicked="#onNumberClicked" prefHeight="50.0" prefWidth="50.0" text="5">
+                <font>
+                    <Font name="Britannic Bold" size="18.0" />
+                </font>
+            </Button>
+            <Button fx:id="btn6" layoutX="10.0" layoutY="182.0" mnemonicParsing="false" onKeyPressed="#onNumberKeyBoard" onMouseClicked="#onNumberClicked" prefHeight="50.0" prefWidth="50.0" text="6">
+                <font>
+                    <Font name="Britannic Bold" size="18.0" />
+                </font>
+            </Button>
+            <Button fx:id="btnMinus" layoutX="75.0" layoutY="182.0" mnemonicParsing="false" onKeyPressed="#onSymbolKeyBoard" onMouseClicked="#onSymbolClicked" prefHeight="50.0" prefWidth="50.0" text="-" textFill="#fe7e27">
+                <font>
+                    <Font name="Britannic Bold" size="18.0" />
+                </font>
+            </Button>
+            <Button fx:id="btn1" layoutX="206.0" layoutY="96.0" mnemonicParsing="false" onKeyPressed="#onNumberKeyBoard" onMouseClicked="#onNumberClicked" prefHeight="50.0" prefWidth="50.0" text="1">
+                <font>
+                    <Font name="Britannic Bold" size="18.0" />
+                </font>
+            </Button>
+            <Button fx:id="btn2" layoutX="47.0" layoutY="182.0" mnemonicParsing="false" onKeyPressed="#onNumberKeyBoard" onMouseClicked="#onNumberClicked" prefHeight="50.0" prefWidth="50.0" text="2">
+                <font>
+                    <Font name="Britannic Bold" size="18.0" />
+                </font>
+            </Button>
+            <Button fx:id="btn3" layoutX="112.0" layoutY="182.0" mnemonicParsing="false" onKeyPressed="#onNumberKeyBoard" onMouseClicked="#onNumberClicked" prefHeight="50.0" prefWidth="50.0" text="3">
+                <font>
+                    <Font name="Britannic Bold" size="18.0" />
+                </font>
+            </Button>
+            <Button fx:id="btnPlus" layoutX="177.0" layoutY="182.0" mnemonicParsing="false" onKeyPressed="#onSymbolKeyBoard" onMouseClicked="#onSymbolClicked" prefHeight="50.0" prefWidth="50.0" text="+" textFill="#fe7e27">
+                <font>
+                    <Font name="Britannic Bold" size="18.0" />
+                </font>
+            </Button>
+            <Button fx:id="btnComma" layoutX="206.0" layoutY="151.0" mnemonicParsing="false" onKeyPressed="#onSymbolKeyBoard" onMouseClicked="#onCommaBtnClicked" prefHeight="50.0" prefWidth="50.0" text=",">
+                <font>
+                    <Font name="Britannic Bold" size="18.0" />
+                </font>
+            </Button>
+            <Button fx:id="btn0" layoutX="165.0" layoutY="207.0" mnemonicParsing="false" onKeyPressed="#onNumberKeyBoard" onMouseClicked="#onNumberClicked" prefHeight="50.0" prefWidth="50.0" text="0">
+                <font>
+                    <Font name="Britannic Bold" size="18.0" />
+                </font>
+            </Button>
+            <Button fx:id="btnEquals" layoutX="10.0" layoutY="262.0" mnemonicParsing="false" onKeyPressed="#onSymbolKeyBoard" onMouseClicked="#onEqualsBtnClicked" prefHeight="50.0" prefWidth="115.0" style="-fx-background-color: FE7E27;" text="=" textFill="WHITE">
+                <font>
+                    <Font name="Britannic Bold" size="18.0" />
+                </font>
+            </Button>
+        </children>
+        <opaqueInsets>
+            <Insets />
+        </opaqueInsets>
+        <VBox.margin>
+            <Insets />
+        </VBox.margin>
+    </FlowPane>
+   <Label fx:id="errorLbl" textFill="#dd0e0e">
+      <font>
+         <Font name="Britannic Bold" size="14.0" />
+      </font></Label>
+</VBox>

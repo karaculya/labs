@@ -16,8 +16,8 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public class Main {
     public static void main(String[] args) throws DuplicateModelNameException, NoSuchModelNameException, IOException, ClassNotFoundException, InterruptedException {
-        Transport car = new Car("Toyota", 10);
-        Transport moto = new Motorbike("BMW", 10);
+//        Transport car = new Car("Toyota", 10);
+//        Transport moto = new Motorbike("BMW", 10);
 
         /* Task 1
         Thread nameThread = new NameThread(moto);
@@ -30,13 +30,13 @@ public class Main {
         priceThread.start();
          */
 
-//         /* Task 2
+         /* Task 2
         TransportSynchronizer transportSynchronizer = new TransportSynchronizer(car);
         Thread thread = new Thread(new NameRunnable(transportSynchronizer));
         thread.start();
         Thread thread1 = new Thread(new PriceRunnable(transportSynchronizer));
         thread1.start();
-//          */
+          */
 
         /* Task 3
         ReentrantLock reentrantLock = new ReentrantLock();

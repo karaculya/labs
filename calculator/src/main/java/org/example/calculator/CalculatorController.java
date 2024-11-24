@@ -3,79 +3,60 @@ package org.example.calculator;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 
 public class CalculatorController {
     @FXML
-    private Button button;
-    @FXML
-    private Label errorLbl, displayLbl;
+    private Label errorLbl, displayLbl, resLbl;
 
     private String currentNumber = "0";
     private String firstNumber = "";
     private String operator;
     private double res = 0;
 
-//    todo onNumberKeyBoard,onSymbolKeyBoard
-
     @FXML
-    public void onNumberKeyBoard(KeyEvent event) {
-        String input = event.getCharacter();
-        if (input.matches("[0-9,]")) {
-            setCurrentNumber(Integer.parseInt(input));
+    public void onKeyPressed(KeyEvent event) {
+        String input = event.getCode().getName();
+        switch (input) {
+            case "Clear", "Delete" -> clear();
+            case "Enter", "Equals" -> equals();
+            case "Comma" -> comma();
+            case "Plus", "Minus", "Multiply", "Divide" -> setOperator(input);
+            default -> {
+                if (input.matches("[0-9,]")) {
+                    setCurrentNumber(Integer.parseInt(input));
+                } else {
+                    System.out.println("KeyEvent don't matches with operations and numbers " + input);
+                }
+            }
         }
     }
 
     @FXML
-    public void onSymbolKeyBoard(KeyEvent event) {
-        operator = event.getCode().getName();
-        setOperator();
-    }
-
-    @FXML
-    public void onNumberClicked(MouseEvent event) {
-        int value = Integer.parseInt(((Button) event.getSource()).getId().replace("btn", ""));
-        setCurrentNumber(value);
-    }
-
-    @FXML
-    public void onSymbolClicked(MouseEvent event) {
-        operator = ((Button) event.getSource()).getId().replace("btn", "");
-        setOperator();
-    }
-
-    @FXML
-    public void onClearBtnClicked(MouseEvent event) {
-        currentNumber = "0";
-        firstNumber = "";
-        operator = "";
-        res = 0;
-        displayLbl.setText(currentNumber);
-        errorLbl.setText("");
-    }
-
-    @FXML
-    public void onEqualsBtnClicked(MouseEvent event) {
-        currentNumber = String.valueOf(res);
-        displayLbl.setText(currentNumber);
-    }
-
-    @FXML
-    public void onCommaBtnClicked(MouseEvent event) {
-        if (displayLbl.getText().contains(".")) {
-            errorLbl.setText("Comma must be one");
-        } else {
-            currentNumber += ".";
-            displayLbl.setText(currentNumber);
+    public void onClicked(MouseEvent event) {
+        String input = ((Button) event.getSource()).getId().replace("btn", "");
+        switch (input) {
+            case "Clear" -> clear();
+            case "Equals" -> equals();
+            case "Comma" -> comma();
+            case "Plus", "Minus", "Multiply", "Divide", "Pow", "Sqrt" -> setOperator(input);
+            default -> {
+                if (input.matches("[0-9,]")) {
+                    setCurrentNumber(Integer.parseInt(input));
+                }
+            }
         }
     }
 
     private void setCurrentNumber(int value) {
-        currentNumber = displayLbl.getText().equals("0") ?
-                String.valueOf(value)
-                : displayLbl.getText() + value;
+        if (displayLbl.getText().equals("0")) {
+            currentNumber = String.valueOf(value);
+        } else if (currentNumber.contains(".")) {
+            currentNumber = String.valueOf(Double.parseDouble(displayLbl.getText()) * 10 + value);
+        } else {
+            currentNumber += String.valueOf(value);
+        }
 
         displayLbl.setText(currentNumber);
 
@@ -84,54 +65,73 @@ public class CalculatorController {
         }
     }
 
-    private void setOperator() {
-        operator = CalculatorUtils.getOperatorSymbol(operator);
+    private void setOperator(String operator) {
+        this.operator = CalculatorUtils.getOperatorSymbol(operator);
 
-        if (operator.equals("√")) {
+        if (this.operator.equals("√")) {
             calculate();
         } else {
             firstNumber = currentNumber;
             currentNumber = "0";
+            updateDisplay();
+        }
+        resLbl.setText("");
+    }
+
+    private void clear() {
+        currentNumber = "0";
+        firstNumber = "";
+        operator = "";
+        res = 0;
+        updateDisplay();
+    }
+
+    private void equals() {
+        currentNumber = CalculatorUtils.numToString(res);
+        updateDisplay();
+    }
+
+    private void comma() {
+        if (displayLbl.getText().contains(".")) {
+            errorLbl.setText("Comma must be one");
+        } else {
+            currentNumber += ".";
             displayLbl.setText(currentNumber);
         }
     }
 
-    public void calculate() {
+    private void calculate() {
         StringBuilder builder;
         double currentNumberDouble = Double.parseDouble(currentNumber);
-        if (operator.equals("√")) {
-            builder = new StringBuilder();
-            if (res != 0) {
-                try {
-                    this.res = CalculatorUtils.calculate(operator, res, res, builder);
-                } catch (RuntimeException e) {
-                    errorLbl.setText(e.getMessage());
-                }
+        try {
+            if (operator.equals("√")) {
+                builder = new StringBuilder();
+                res = res != 0 ?
+                        CalculatorUtils.calculate(operator, res, res, builder)
+                        : CalculatorUtils.calculate(operator, res, currentNumberDouble, builder);
+                resLbl.setText(CalculatorUtils.numToString(res));
+            } else if (res != 0) {
+                String s = CalculatorUtils.numToString(res);
+                displayLbl.setText(s);
+                builder = new StringBuilder(s);
+                res = CalculatorUtils.calculate(operator, res, currentNumberDouble, builder);
             } else {
-                try {
-                    this.res = CalculatorUtils.calculate(operator, res, currentNumberDouble, builder);
-                } catch (RuntimeException e) {
-                    errorLbl.setText(e.getMessage());
-                }
+                double firstNumberDouble = Double.parseDouble(firstNumber);
+                builder = new StringBuilder(CalculatorUtils.numToString(firstNumberDouble));
+                res = CalculatorUtils.calculate(operator, firstNumberDouble, currentNumberDouble, builder);
             }
-        } else if (res != 0) {
-            String s = String.valueOf(res);
-            displayLbl.setText(s);
-            builder = new StringBuilder(s);
-            try {
-                this.res = CalculatorUtils.calculate(operator, res, currentNumberDouble, builder);
-            } catch (RuntimeException e) {
-                errorLbl.setText(e.getMessage());
-            }
-        } else {
-            double firstNumberDouble = Double.parseDouble(firstNumber);
-            builder = new StringBuilder(String.valueOf(firstNumberDouble));
-            try {
-                this.res = CalculatorUtils.calculate(operator, firstNumberDouble, currentNumberDouble, builder);
-            } catch (RuntimeException e) {
-                errorLbl.setText(e.getMessage());
-            }
+
+            displayLbl.setText(String.valueOf(builder));
+            resLbl.setText(CalculatorUtils.numToString(res));
+            System.out.println(res);
+        } catch (RuntimeException e) {
+            errorLbl.setText(e.getMessage());
         }
-        displayLbl.setText(String.valueOf(builder));
+    }
+
+    private void updateDisplay() {
+        displayLbl.setText(currentNumber);
+        resLbl.setText("");
+        errorLbl.setText("");
     }
 }

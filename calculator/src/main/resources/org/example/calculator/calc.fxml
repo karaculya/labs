@@ -14,11 +14,6 @@
          <Font name="Britannic Bold" size="18.0" />
       </font>
    </Label>
-    <Label fx:id="resLbl" alignment="CENTER_RIGHT" contentDisplay="RIGHT" layoutX="31.0" layoutY="45.0" prefHeight="30.0" prefWidth="280.0" textAlignment="RIGHT" textFill="#989292">
-      <font>
-         <Font name="Britannic Bold" size="18.0" />
-      </font>
-   </Label>
     <FlowPane hgap="15.0" prefHeight="271.0" prefWidth="302.0" prefWrapLength="100.0" vgap="5.0">
         <children>
             <Button fx:id="btnClear" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onKeyPressed="#onKeyPressed" onMouseClicked="#onClicked" prefHeight="50.0" prefWidth="50.0" text="C">
@@ -119,8 +114,4 @@
             <Insets />
         </VBox.margin>
     </FlowPane>
-   <Label fx:id="errorLbl" textFill="#dd0e0e">
-      <font>
-         <Font name="Britannic Bold" size="14.0" />
-      </font></Label>
 </VBox>

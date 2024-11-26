@@ -8,13 +8,12 @@ import javafx.scene.input.MouseEvent;
 
 public class CalculatorController {
     @FXML
-    private Label errorLbl, displayLbl, resLbl;
+    private Label displayLbl;
 
     private String currentNumber = "0";
     private String firstNumber = "";
     private String operator;
     private double res = 0;
-    private boolean hasResult = false;
 
     @FXML
     public void onKeyPressed(KeyEvent event) {
@@ -23,7 +22,12 @@ public class CalculatorController {
             case "Clear", "Delete" -> clear();
             case "Enter", "Equals" -> equals();
             case "Comma" -> comma();
-            case "P", "Minus", "M", "D" -> setOperator(input);
+            case "P" -> setOperator("Plus");
+            case "Minus" -> setOperator(input);
+            case "M" -> setOperator("Multiply");
+            case "D" -> setOperator("Divide");
+            case "O" -> setOperator("Pow");
+            case "S" -> setOperator("Sqrt");
             default -> {
                 if (input.matches("[0-9,]")) {
                     setCurrentNumber(Integer.parseInt(input));
@@ -60,10 +64,6 @@ public class CalculatorController {
         }
 
         displayLbl.setText(currentNumber);
-
-        if (!firstNumber.isEmpty()) {
-            calculate();
-        }
     }
 
     private void setOperator(String operator) {
@@ -74,9 +74,8 @@ public class CalculatorController {
         } else {
             firstNumber = currentNumber;
             currentNumber = "0";
-            updateDisplay();
+            displayLbl.setText(currentNumber);
         }
-        resLbl.setText("");
     }
 
     private void clear() {
@@ -84,17 +83,17 @@ public class CalculatorController {
         firstNumber = "";
         operator = "";
         res = 0;
-        updateDisplay();
+        displayLbl.setText(currentNumber);
     }
 
     private void equals() {
-        currentNumber = CalculatorUtils.numToString(res);
-        updateDisplay();
+        calculate();
+        displayLbl.setText(CalculatorUtils.numToString(res));
     }
 
     private void comma() {
         if (displayLbl.getText().contains(".")) {
-            errorLbl.setText("Comma must be one");
+            displayLbl.setText("Comma must be one");
         } else {
             currentNumber += ".";
             displayLbl.setText(currentNumber);
@@ -108,31 +107,22 @@ public class CalculatorController {
             if (operator.equals("√")) {
                 builder = new StringBuilder();
                 res = res != 0 ?
-                        CalculatorUtils.calculate(operator, res, res, builder) :
-                        CalculatorUtils.calculate(operator, res, currentNumberDouble, builder);
-                resLbl.setText(CalculatorUtils.numToString(res));
+                    CalculatorUtils.calculate(operator, res, res, builder) : CalculatorUtils.calculate(operator, res, currentNumberDouble, builder);
+                displayLbl.setText(CalculatorUtils.numToString(res));
             } else if (res != 0) {
                 String s = CalculatorUtils.numToString(res);
                 displayLbl.setText(s);
                 builder = new StringBuilder(s);
                 res = CalculatorUtils.calculate(operator, res, currentNumberDouble, builder);
+                displayLbl.setText(CalculatorUtils.numToString(res));
             } else {
                 double firstNumberDouble = Double.parseDouble(firstNumber);
                 builder = new StringBuilder(CalculatorUtils.numToString(firstNumberDouble));
                 res = CalculatorUtils.calculate(operator, firstNumberDouble, currentNumberDouble, builder);
             }
-
-            displayLbl.setText(CalculatorUtils.numToString(res));
-//            resLbl.setText());
             System.out.println(builder + " = " + res);
         } catch (RuntimeException e) {
-            errorLbl.setText(e.getMessage());
+            displayLbl.setText(e.getMessage());
         }
-    }
-
-    private void updateDisplay() {
-        displayLbl.setText(currentNumber);
-        resLbl.setText("");
-        errorLbl.setText("");
     }
 }

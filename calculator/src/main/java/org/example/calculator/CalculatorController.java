@@ -14,6 +14,7 @@ public class CalculatorController {
     private String firstNumber = "";
     private String operator;
     private double res = 0;
+    private boolean hasResult = false;
 
     @FXML
     public void onKeyPressed(KeyEvent event) {
@@ -22,7 +23,7 @@ public class CalculatorController {
             case "Clear", "Delete" -> clear();
             case "Enter", "Equals" -> equals();
             case "Comma" -> comma();
-            case "Plus", "Minus", "Multiply", "Divide" -> setOperator(input);
+            case "P", "Minus", "M", "D" -> setOperator(input);
             default -> {
                 if (input.matches("[0-9,]")) {
                     setCurrentNumber(Integer.parseInt(input));
@@ -53,9 +54,9 @@ public class CalculatorController {
         if (displayLbl.getText().equals("0")) {
             currentNumber = String.valueOf(value);
         } else if (currentNumber.contains(".")) {
-            currentNumber = String.valueOf(Double.parseDouble(displayLbl.getText()) * 10 + value);
-        } else {
             currentNumber += String.valueOf(value);
+        } else {
+            currentNumber = String.valueOf(Long.parseLong(displayLbl.getText()) * 10 + value);
         }
 
         displayLbl.setText(currentNumber);
@@ -107,8 +108,8 @@ public class CalculatorController {
             if (operator.equals("√")) {
                 builder = new StringBuilder();
                 res = res != 0 ?
-                        CalculatorUtils.calculate(operator, res, res, builder)
-                        : CalculatorUtils.calculate(operator, res, currentNumberDouble, builder);
+                        CalculatorUtils.calculate(operator, res, res, builder) :
+                        CalculatorUtils.calculate(operator, res, currentNumberDouble, builder);
                 resLbl.setText(CalculatorUtils.numToString(res));
             } else if (res != 0) {
                 String s = CalculatorUtils.numToString(res);
@@ -121,9 +122,9 @@ public class CalculatorController {
                 res = CalculatorUtils.calculate(operator, firstNumberDouble, currentNumberDouble, builder);
             }
 
-            displayLbl.setText(String.valueOf(builder));
-            resLbl.setText(CalculatorUtils.numToString(res));
-            System.out.println(res);
+            displayLbl.setText(CalculatorUtils.numToString(res));
+//            resLbl.setText());
+            System.out.println(builder + " = " + res);
         } catch (RuntimeException e) {
             errorLbl.setText(e.getMessage());
         }

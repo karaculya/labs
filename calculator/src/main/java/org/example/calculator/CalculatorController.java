@@ -58,52 +58,44 @@ public class CalculatorController {
     }
 
     private void setCurrentNumber(int value) {
-//        currentNumber = (currentNumber.equals("0") || displayLbl.getText().equals("0")) ?
         currentNumber = displayLbl.getText().equals("0") ?
                 String.valueOf(value)
                 : currentNumber + value;
 
-        System.out.println("IN METHOD setCurrentNumber(int value) currentNumber = " + currentNumber);
-
         displayLbl.setText(currentNumber);
     }
 
-    private void setOperator(String operator) {
-        String s = CalculatorUtils.getOperatorSymbol(operator);
+    private void setOperator(String op) {
+        String s = CalculatorUtils.getOperatorSymbol(op);
 
-        System.out.print("IN METHOD setOperator(String operator) ");
-
-        if (!this.operator.isEmpty()) {
-            calculate();
-        }
         if (s.equals("√")) {
             calculate();
-            this.operator = s;
+            operator = s;
             calculate();
+            operator = "";
         } else {
             if (firstNumber.isEmpty()) {
                 firstNumber = currentNumber;
-                System.out.println("firstNumber = " + firstNumber);
                 displayLbl.setText("0");
+            } else {
+                calculate();
             }
-            this.operator = s;
+            operator = s;
+            System.out.println(operator);
         }
-        System.out.println("this.operator = " + this.operator);
     }
 
     private void clear() {
-        currentNumber = "0";
+        currentNumber = "";
         firstNumber = "";
         operator = "";
         res = 0;
         error = "";
-        displayLbl.setText(currentNumber);
+        displayLbl.setText("0");
     }
 
     private void equals() {
         calculate();
-//        if (error.isEmpty()) displayLbl.setText(CalculatorUtils.numToString(res));
-//        else displayLbl.setText(error);
         if (!error.isEmpty()) displayLbl.setText(error);
     }
 
@@ -115,36 +107,20 @@ public class CalculatorController {
     }
 
     private void calculate() {
-        System.out.println("currentNumber = " + currentNumber + " firstNumber " + firstNumber);
-        StringBuilder builder;
-        double currentNumberDouble = Double.parseDouble(currentNumber);
+        double currentNumberDouble = currentNumber.isEmpty() ? 0 : Double.parseDouble(currentNumber);
         try {
             if (operator.equals("√")) {
-                builder = new StringBuilder();
                 res = res != 0 ?
-                        CalculatorUtils.calculate(operator, res, res, builder) : CalculatorUtils.calculate(operator, res, currentNumberDouble, builder);
-//            } else if (res != 0) {
-//                String s = CalculatorUtils.numToString(res);
-//                displayLbl.setText(s);
-//                builder = new StringBuilder(s);
-//                res = CalculatorUtils.calculate(operator, res, currentNumberDouble, builder);
+                        CalculatorUtils.calculate(operator, res, res)
+                        : CalculatorUtils.calculate(operator, res, currentNumberDouble);
             } else {
-                builder = res != 0 ?
-                        new StringBuilder(CalculatorUtils.numToString(res))
-                        : new StringBuilder(CalculatorUtils.numToString(Double.parseDouble(firstNumber)));
-
                 res = res != 0 ?
-                        CalculatorUtils.calculate(operator, res, currentNumberDouble, builder)
-                        : CalculatorUtils.calculate(operator, Double.parseDouble(firstNumber), currentNumberDouble, builder);
-
-//                double firstNumberDouble = Double.parseDouble(firstNumber);
-//                builder = new StringBuilder(CalculatorUtils.numToString(firstNumberDouble));
-//                res = CalculatorUtils.calculate(operator, firstNumberDouble, currentNumberDouble, builder);
+                        CalculatorUtils.calculate(operator, res, currentNumberDouble)
+                        : CalculatorUtils.calculate(operator, Double.parseDouble(firstNumber), currentNumberDouble);
             }
-            System.out.print("IN METHOD calculate()");
-            System.out.println(builder + " = " + res);
-            displayLbl.setText(CalculatorUtils.numToString(res));
-            firstNumber = "";
+            firstNumber = CalculatorUtils.numToString(res);
+            displayLbl.setText(firstNumber);
+            currentNumber = "";
         } catch (RuntimeException e) {
             error = e.getMessage();
             displayLbl.setText(e.getMessage());

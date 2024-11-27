@@ -1,41 +1,30 @@
 package org.example.calculator;
 
 public class CalculatorUtils {
-    static double calculate(String operator, double res, double num, StringBuilder builder) {
+    static double calculate(String operator, double res, double num) {
+        System.out.print(res + " ");
         switch (operator) {
-            case "+" -> {
-                builder.append("+").append(numToString(num));
-                res += num;
-            }
-            case "-" -> {
-                builder.append("-").append(numToString(num));
-                res -= num;
-            }
-            case "*" -> {
-                builder.append("*").append(numToString(num));
-                res *= num;
-            }
+            case "+" -> res += num;
+            case "-" -> res -= num;
+            case "*" -> res *= num;
             case "/" -> {
                 if (num == 0) {
                     throw new RuntimeException("Division by zero");
                 } else {
-                    builder.append("/").append(numToString(num));
                     res /= num;
                 }
             }
-            case "^" -> {
-                builder.append("^").append(numToString(num));
-                res = Math.pow(res, num);
-            }
+            case "^" -> res = Math.pow(res, num);
             case "√" -> {
                 if (String.valueOf(num).contains("-")) {
                     throw new RuntimeException("Root of a negative number");
                 } else {
-                    builder.append("√").append(numToString(num));
                     res = Math.sqrt(num);
                 }
             }
         }
+
+        System.out.println(operator + " " + num + " = " + res);
         return res;
     }
 

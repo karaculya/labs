@@ -12,11 +12,13 @@ public class CalculatorController {
 
     private String currentNumber = "0";
     private String firstNumber = "";
-    private String operator;
+    private String operator = "";
     private double res = 0;
+    private String error = "";
 
     @FXML
     public void onKeyPressed(KeyEvent event) {
+        if (!error.isEmpty()) clear();
         String input = event.getCode().getName();
         switch (input) {
             case "Clear", "Delete" -> clear();
@@ -40,6 +42,7 @@ public class CalculatorController {
 
     @FXML
     public void onClicked(MouseEvent event) {
+        if (!error.isEmpty()) clear();
         String input = ((Button) event.getSource()).getId().replace("btn", "");
         switch (input) {
             case "Clear" -> clear();
@@ -55,27 +58,37 @@ public class CalculatorController {
     }
 
     private void setCurrentNumber(int value) {
-        if (displayLbl.getText().equals("0")) {
-            currentNumber = String.valueOf(value);
-        } else if (currentNumber.contains(".")) {
-            currentNumber += String.valueOf(value);
-        } else {
-            currentNumber = String.valueOf(Long.parseLong(displayLbl.getText()) * 10 + value);
-        }
+//        currentNumber = (currentNumber.equals("0") || displayLbl.getText().equals("0")) ?
+        currentNumber = displayLbl.getText().equals("0") ?
+                String.valueOf(value)
+                : currentNumber + value;
+
+        System.out.println("IN METHOD setCurrentNumber(int value) currentNumber = " + currentNumber);
 
         displayLbl.setText(currentNumber);
     }
 
     private void setOperator(String operator) {
-        this.operator = CalculatorUtils.getOperatorSymbol(operator);
+        String s = CalculatorUtils.getOperatorSymbol(operator);
 
-        if (this.operator.equals("√")) {
+        System.out.print("IN METHOD setOperator(String operator) ");
+
+        if (!this.operator.isEmpty()) {
+            calculate();
+        }
+        if (s.equals("√")) {
+            calculate();
+            this.operator = s;
             calculate();
         } else {
-            firstNumber = currentNumber;
-            currentNumber = "0";
-            displayLbl.setText(currentNumber);
+            if (firstNumber.isEmpty()) {
+                firstNumber = currentNumber;
+                System.out.println("firstNumber = " + firstNumber);
+                displayLbl.setText("0");
+            }
+            this.operator = s;
         }
+        System.out.println("this.operator = " + this.operator);
     }
 
     private void clear() {
@@ -83,45 +96,57 @@ public class CalculatorController {
         firstNumber = "";
         operator = "";
         res = 0;
+        error = "";
         displayLbl.setText(currentNumber);
     }
 
     private void equals() {
         calculate();
-        displayLbl.setText(CalculatorUtils.numToString(res));
+//        if (error.isEmpty()) displayLbl.setText(CalculatorUtils.numToString(res));
+//        else displayLbl.setText(error);
+        if (!error.isEmpty()) displayLbl.setText(error);
     }
 
     private void comma() {
-        if (displayLbl.getText().contains(".")) {
-            displayLbl.setText("Comma must be one");
-        } else {
+        if (!displayLbl.getText().contains(".")) {
             currentNumber += ".";
             displayLbl.setText(currentNumber);
         }
     }
 
     private void calculate() {
+        System.out.println("currentNumber = " + currentNumber + " firstNumber " + firstNumber);
         StringBuilder builder;
         double currentNumberDouble = Double.parseDouble(currentNumber);
         try {
             if (operator.equals("√")) {
                 builder = new StringBuilder();
                 res = res != 0 ?
-                    CalculatorUtils.calculate(operator, res, res, builder) : CalculatorUtils.calculate(operator, res, currentNumberDouble, builder);
-                displayLbl.setText(CalculatorUtils.numToString(res));
-            } else if (res != 0) {
-                String s = CalculatorUtils.numToString(res);
-                displayLbl.setText(s);
-                builder = new StringBuilder(s);
-                res = CalculatorUtils.calculate(operator, res, currentNumberDouble, builder);
-                displayLbl.setText(CalculatorUtils.numToString(res));
+                        CalculatorUtils.calculate(operator, res, res, builder) : CalculatorUtils.calculate(operator, res, currentNumberDouble, builder);
+//            } else if (res != 0) {
+//                String s = CalculatorUtils.numToString(res);
+//                displayLbl.setText(s);
+//                builder = new StringBuilder(s);
+//                res = CalculatorUtils.calculate(operator, res, currentNumberDouble, builder);
             } else {
-                double firstNumberDouble = Double.parseDouble(firstNumber);
-                builder = new StringBuilder(CalculatorUtils.numToString(firstNumberDouble));
-                res = CalculatorUtils.calculate(operator, firstNumberDouble, currentNumberDouble, builder);
+                builder = res != 0 ?
+                        new StringBuilder(CalculatorUtils.numToString(res))
+                        : new StringBuilder(CalculatorUtils.numToString(Double.parseDouble(firstNumber)));
+
+                res = res != 0 ?
+                        CalculatorUtils.calculate(operator, res, currentNumberDouble, builder)
+                        : CalculatorUtils.calculate(operator, Double.parseDouble(firstNumber), currentNumberDouble, builder);
+
+//                double firstNumberDouble = Double.parseDouble(firstNumber);
+//                builder = new StringBuilder(CalculatorUtils.numToString(firstNumberDouble));
+//                res = CalculatorUtils.calculate(operator, firstNumberDouble, currentNumberDouble, builder);
             }
+            System.out.print("IN METHOD calculate()");
             System.out.println(builder + " = " + res);
+            displayLbl.setText(CalculatorUtils.numToString(res));
+            firstNumber = "";
         } catch (RuntimeException e) {
+            error = e.getMessage();
             displayLbl.setText(e.getMessage());
         }
     }

@@ -36,3 +36,6 @@ build/
 
 ### Mac OS ###
 .DS_Store
+
+### my secret resources ###
+.jdbc/src/main/resources/

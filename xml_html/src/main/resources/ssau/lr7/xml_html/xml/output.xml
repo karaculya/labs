@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<student lastname="Akhmadullina">
+        
+    <subject mark="5" title="Math"/>
+        
+    <subject mark="5" title="Programming"/>
+        
+    <subject mark="4" title="History"/>
+        
+    <average>4.666666666666667</average>
+    
+</student>

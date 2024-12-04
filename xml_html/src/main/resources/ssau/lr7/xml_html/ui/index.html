@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Лабораторная 7</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="window">
+    <div class="text">
+        <h1>Калькулятор</h1>
+        <p>Введите два значения и выберите операцию</p>
+    </div>
+    <form id="dataForm" class="form" action="result.html" onsubmit="return calculate()">
+        <input type="number" id="num1" name="num1" placeholder="Первое значение" required>
+        <select name="operation">
+            <option>Операция</option>
+            <option id="add" value="add">+</option>
+            <option id="subtract" value="subtract">-</option>
+            <option id="multiply" value="multiply">*</option>
+            <option id="divide" value="divide">/</option>
+        </select>
+        <input type="number" id="num2" name="num2" placeholder="Второе значение" required>
+        <button type="submit">Посчитать</button>
+    </form>
+</div>
+<script src="script.js"></script>
+</body>
+</html>

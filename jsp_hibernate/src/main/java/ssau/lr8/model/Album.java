@@ -1,0 +1,32 @@
+package ssau.lr8.model;
+
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import javax.persistence.*;
+import java.util.List;
+
+@Entity
+@Table(name = "albums")
+@Data
+@NoArgsConstructor
+public class Album {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+    @Column(nullable = false)
+    private String name;
+    @Column(nullable = false)
+    private String genre;
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "artist_id", nullable = false)
+    private Artist artist;
+    @OneToMany(mappedBy = "album", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Composition> compositions;
+
+    public Album(Artist artist, String genre, String name) {
+        this.artist = artist;
+        this.genre = genre;
+        this.name = name;
+    }
+}

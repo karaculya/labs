@@ -10,7 +10,7 @@
 </head>
 <body>
 <section class="container m-5">
-    <%@ include file="header.jsp"%>
+    <%@ include file="header.jsp" %>
     <div class="container">
         <%
             List<Object[]> numAlbumsAndComp = (List<Object[]>) request.getAttribute("numAlbumsAndComp");
@@ -53,14 +53,12 @@
             </div>
             <%
                 List<Album> albums = (List<Album>) request.getAttribute("albums");
-                if (numAlbumsAndComp != null &&
-//                        ((long) numAlbumsAndComp.get(0)[1]) == 0 &&
-                        albums.size() > 0) {
+                if (albums == null || albums.isEmpty()) {
                     out.println("</div>" +
                             "<h5>This artist haven't albums, look at another albums</h5>" +
                             "<div class=\"d-flex flex-row flex-wrap gap-2 m-3\">");
-                }
-                for (Album album : albums) {
+                } else {
+                    for (Album album : albums) {
             %>
             <div class="card card-form" id="album-<%= album.getId() %>">
                 <div class="card-body">
@@ -95,6 +93,7 @@
                 </div>
             </div>
             <%
+                    }
                 }
             %>
         </div>

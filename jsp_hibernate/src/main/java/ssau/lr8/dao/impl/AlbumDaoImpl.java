@@ -36,6 +36,19 @@ public class AlbumDaoImpl implements AlbumDao {
     }
 
     @Override
+    public List<Album> getAllAlbumsByArtistId(int artistId) {
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            return session
+                    .createQuery("from Album a WHERE a.id = :artistId", Album.class)
+                    .setParameter("artistId", artistId)
+                    .list();
+        } catch (HibernateException e) {
+            System.out.println("Albums not found");
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
     public void deleteAlbum(int id) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             session.beginTransaction();

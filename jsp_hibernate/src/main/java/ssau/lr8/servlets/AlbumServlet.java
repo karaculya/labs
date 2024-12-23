@@ -22,8 +22,10 @@ public class AlbumServlet extends HttpServlet {
                     int id = Integer.parseInt(request.getParameter("id"));
                     List<Object[]> numAlbumsAndComp = DaoFactory.getArtistDao().getArtistAlbumAndCompositionCountById(id);
                     request.setAttribute("numAlbumsAndComp", numAlbumsAndComp);
+                    request.setAttribute("albums", DaoFactory.getAlbumDao().getAllAlbumsByArtistId(id));
+                } else {
+                    request.setAttribute("albums", DaoFactory.getAlbumDao().getAllAlbums());
                 }
-                request.setAttribute("albums", DaoFactory.getAlbumDao().getAllAlbums());
                 getServletContext().getRequestDispatcher("/albums.jsp").forward(request, response);
             }
             case "delete" -> {

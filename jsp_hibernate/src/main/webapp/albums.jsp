@@ -30,10 +30,10 @@
             <div class="card-body">
                 <form id="addArtistForm" action="albums" method="POST">
                     <div class="mb-3">
-                        <label for="albumName" class="form-label">Album name</label>
-                        <input type="text" class="form-control" id="albumName" name="name" required>
-                        <label for="albumGenre" class="form-label">Album genre</label>
-                        <input type="text" class="form-control" id="albumGenre" name="genre" required>
+                        <label for="name" class="form-label">Album name</label>
+                        <input type="text" class="form-control" id="name" name="name" required>
+                        <label for="genre" class="form-label">Album genre</label>
+                        <input type="text" class="form-control" id="genre" name="genre" required>
                     </div>
                     <button type="button" class="btn btn-dark"
                             onclick="createAlbum(<%=request.getParameter("id")%>)">Add
@@ -128,14 +128,14 @@
     }
 
     function createAlbum(artistId) {
-        const name = $("#albumName").val();
-        const genre = $("#albumGenre").val();
+        const genre = $("#genre").val();
+        const name = $("#name").val();
         if (name && genre) {
             $.ajax({
                 url: "albums",
                 type: "POST",
                 data: {
-                    'artistId': artistId,
+                    'id': artistId,
                     'action': 'save',
                     'name': name,
                     'genre': genre

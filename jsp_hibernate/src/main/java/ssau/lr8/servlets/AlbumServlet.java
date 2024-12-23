@@ -10,7 +10,6 @@ import ssau.lr8.dao.util.DaoFactory;
 import ssau.lr8.model.Album;
 
 import java.io.IOException;
-import java.util.List;
 
 @WebServlet("/albums")
 public class AlbumServlet extends HttpServlet {
@@ -19,10 +18,11 @@ public class AlbumServlet extends HttpServlet {
         switch (action != null ? action : "") {
             case "" -> {
                 if (request.getParameter("id") != null) {
-                    int id = Integer.parseInt(request.getParameter("id"));
-                    List<Object[]> numAlbumsAndComp = DaoFactory.getArtistDao().getArtistAlbumAndCompositionCountById(id);
-                    request.setAttribute("numAlbumsAndComp", numAlbumsAndComp);
-                    request.setAttribute("albums", DaoFactory.getAlbumDao().getAllAlbumsByArtistId(id));
+                    int artistId = Integer.parseInt(request.getParameter("id"));
+                    request.setAttribute("numAlbumsAndComp",
+                            DaoFactory.getArtistDao().getArtistAlbumAndCompositionCountById(artistId));
+                    request.setAttribute("albums",
+                            DaoFactory.getAlbumDao().getAllAlbumsByArtistId(artistId));
                 } else {
                     request.setAttribute("albums", DaoFactory.getAlbumDao().getAllAlbums());
                 }
@@ -72,9 +72,12 @@ public class AlbumServlet extends HttpServlet {
                 }
             }
             case "save" -> {
+                int idArtist = Integer.parseInt(request.getParameter("id"));
+                System.out.println(idArtist);
                 String name = request.getParameter("name");
+                System.out.println(name);
                 String genre = request.getParameter("genre");
-                int idArtist = Integer.parseInt(request.getParameter("artistId"));
+                System.out.println(genre);
                 DaoFactory.getAlbumDao().createAlbum(idArtist, name, genre);
             }
             default -> response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid action parameter");

@@ -33,6 +33,19 @@ public class CompositionDaoImpl implements CompositionDao {
     }
 
     @Override
+    public List<Composition> getAllCompositionsByAlbumId(int albumId) {
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            return session
+                    .createQuery("from Composition c WHERE c.album.id = :albumId", Composition.class)
+                    .setParameter("albumId", albumId)
+                    .list();
+        } catch (HibernateException e) {
+            System.out.println("Compositions not found");
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
     public void deleteComposition(int id) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             session.beginTransaction();

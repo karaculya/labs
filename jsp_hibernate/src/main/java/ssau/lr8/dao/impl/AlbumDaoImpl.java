@@ -39,7 +39,7 @@ public class AlbumDaoImpl implements AlbumDao {
     public List<Album> getAllAlbumsByArtistId(int artistId) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             return session
-                    .createQuery("from Album a WHERE a.id = :artistId", Album.class)
+                    .createQuery("from Album a WHERE a.artist.id = :artistId", Album.class)
                     .setParameter("artistId", artistId)
                     .list();
         } catch (HibernateException e) {

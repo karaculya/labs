@@ -23,11 +23,12 @@ public class CompositionServlet extends HttpServlet {
             case "" -> {
                 if (request.getParameter("id") != null) {
                     int albumId = Integer.parseInt(request.getParameter("id"));
-                    request.setAttribute("results",
-                            DaoFactory.getAlbumDao().getNameAlbumAndSumDuration(albumId));
+                    request.setAttribute("results", DaoFactory.getAlbumDao().getNameAlbumAndSumDuration(albumId));
+                    List<Composition> compositions = DaoFactory.getCompositionDao().getAllCompositionsByAlbumId(albumId);
+                    request.setAttribute("compositions", compositions);
+                } else {
+                    request.setAttribute("compositions", DaoFactory.getCompositionDao().getAllCompositions());
                 }
-                request.setAttribute("compositions",
-                        DaoFactory.getCompositionDao().getAllCompositions());
                 getServletContext().getRequestDispatcher("/compositions.jsp").forward(request, response);
             }
             case "delete" -> {
@@ -76,13 +77,18 @@ public class CompositionServlet extends HttpServlet {
                 }
             }
             case "save" -> {
-                int id = 0;
-                String name = "", duration = "";
-                if (request.getParameter("id") != null) id = Integer.parseInt(request.getParameter("id"));
+//                int id = 0;
+                String id = "", name = "", duration = "";
+//                if (request.getParameter("id") != null)
+                    id = request.getParameter("id");
+                System.out.println(id);
                 if (request.getParameter("name") != null) name = request.getParameter("name");
+                System.out.println(name);
                 if (request.getParameter("duration") != null) duration = request.getParameter("duration");
-                if (id != 0) DaoFactory.getCompositionDao()
-                        .createComposition(id, name, Time.valueOf(duration));
+                System.out.println(duration);
+                if (id != null || !id.isEmpty()) DaoFactory.getCompositionDao()
+                        .createComposition(Integer.parseInt(id), name, Time.valueOf(duration));
+                System.out.println("create");
             }
         }
     }

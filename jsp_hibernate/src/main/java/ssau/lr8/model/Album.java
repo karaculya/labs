@@ -24,9 +24,9 @@ public class Album {
     @OneToMany(mappedBy = "album", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Composition> compositions;
 
-    public Album(Artist artist, String genre, String name) {
+    public Album(Artist artist, String name, String genre) {
         this.artist = artist;
-        this.genre = genre;
         this.name = name;
+        this.genre = genre;
     }
 }

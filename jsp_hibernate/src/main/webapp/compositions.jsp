@@ -12,18 +12,29 @@
 </head>
 <body>
 <section class="container m-5">
-    <%@ include file="header.jsp"%>
+    <%@ include file="header.jsp" %>
     <div class="container">
         <% List<Object[]> nameAlbumAndSumDuration = (List<Object[]>) request.getAttribute("results");
+            List<Composition> compositions = (List<Composition>) request.getAttribute("compositions");
             if (nameAlbumAndSumDuration != null) {
-                for (Object[] row : nameAlbumAndSumDuration) {
-                    out.print("<div class=\"d-flex justify-content-between\"><div>" +
-                            "<h2>" + row[0] + "</h2>" +
-                            "<p>Общая длительность: " + row[1] + "</p></div>" +
-                            "<div>" +
-                            "<button class=\"btn btn-dark\" onclick=toggleForm(\"addCompositionFormContainer\")>" +
-                            "<img src=\"https://img.icons8.com/ios-glyphs/30/ffffff/plus.png\" alt=\"Add composition\">Add composition" +
-                            "</button></div></div>");
+                if (compositions == null || compositions.isEmpty()) {
+                    for (Object[] row : nameAlbumAndSumDuration) {
+                        out.print("<div class=\"d-flex justify-content-between\"><div>" +
+                                "<h2>" + row[0] + "</h2></div>" +
+                                "<button class=\"btn btn-dark\" onclick=toggleForm(\"addCompositionFormContainer\")>" +
+                                "<img src=\"https://img.icons8.com/ios-glyphs/30/ffffff/plus.png\" alt=\"Add composition\">Add composition" +
+                                "</button></div></div>");
+                    }
+                } else {
+                    for (Object[] row : nameAlbumAndSumDuration) {
+                        out.print("<div class=\"d-flex justify-content-between\"><div>" +
+                                "<h2>" + row[0] + "</h2>" +
+                                "<p>Общая длительность: " + row[1] + "</p></div>" +
+                                "<div>" +
+                                "<button class=\"btn btn-dark\" onclick=toggleForm(\"addCompositionFormContainer\")>" +
+                                "<img src=\"https://img.icons8.com/ios-glyphs/30/ffffff/plus.png\" alt=\"Add composition\">Add composition" +
+                                "</button></div></div>");
+                    }
                 }
             } else {
                 out.print("<h2>All compositions</h2>");
@@ -43,23 +54,37 @@
                         <input type="time" step="1" class="form-control" id="duration" name="duration" required>
                     </div>
                     <button type="button" class="btn btn-dark"
-                            onclick="createComposition(<%=request.getParameter("album_id")%>)">Add
+                            onclick="createComposition(<%=request.getParameter("id")%>)">Add
                     </button>
                 </form>
             </div>
         </div>
 
-        <div class="d-flex">
+        <%
+            String displayClass = "d-flex";
+            if (compositions == null || compositions.isEmpty()) {
+                displayClass = "d-none";
+                out.println("</div>" +
+                        "<h5 class=\"m-2\">This album haven't compositions</h5>" +
+                        "<div class=\"d-flex flex-row flex-wrap gap-2 m-3\">");
+        %>
+
+        <div class="<%= displayClass %>">
             <div class="p-2 fw-light">#</div>
             <div class="p-2 flex-grow-1 fw-light">Name</div>
             <div class="p-2 fw-light">Duration</div>
         </div>
-        <% List<Composition> compositions = (List<Composition>) request.getAttribute("compositions");
-            for (Composition composition : compositions) { %>
+        <%
+            } else {
+                for (Composition composition : compositions) {
+        %>
         <div class="d-flex comp" id="composition-<%= composition.getId() %>">
-            <div class="p-2 fw-light"><%=composition.getId()%></div>
-            <div class="p-2 flex-grow-1"><%=composition.getName()%></div>
-            <div class="p-2 duration"><%= composition.getDuration().toLocalTime()%></div>
+            <div class="p-2 fw-light"><%=composition.getId()%>
+            </div>
+            <div class="p-2 flex-grow-1"><%=composition.getName()%>
+            </div>
+            <div class="p-2 duration"><%= composition.getDuration().toLocalTime()%>
+            </div>
             <div class="p-2 options">
                 <div class="dropdown">
                     <button class="btn btn-link more-options" type="button" data-bs-toggle="dropdown"
@@ -77,7 +102,10 @@
                 </div>
             </div>
         </div>
-        <%}%>
+        <%
+                }
+            }
+        %>
     </div>
 </section>
 <script src="${pageContext.request.contextPath}/webjars/jquery/3.6.0/jquery.min.js"></script>
@@ -143,7 +171,7 @@
                 url: 'compositions',
                 type: 'POST',
                 data: {
-                    'album_id': id,
+                    'id': id,
                     'action': 'save',
                     'name': name,
                     'duration': duration

@@ -36,7 +36,7 @@
                         <input type="text" class="form-control" id="albumGenre" name="genre" required>
                     </div>
                     <button type="button" class="btn btn-dark"
-                            onclick="createAlbum(<%=request.getParameter("artistId")%>)">Add
+                            onclick="createAlbum(<%=request.getParameter("id")%>)">Add
                     </button>
                 </form>
             </div>
@@ -54,7 +54,8 @@
             <%
                 List<Album> albums = (List<Album>) request.getAttribute("albums");
                 if (numAlbumsAndComp != null &&
-                        ((long) numAlbumsAndComp.get(0)[1]) == 0 && albums.size() > 0) {
+//                        ((long) numAlbumsAndComp.get(0)[1]) == 0 &&
+                        albums.size() > 0) {
                     out.println("</div>" +
                             "<h5>This artist haven't albums, look at another albums</h5>" +
                             "<div class=\"d-flex flex-row flex-wrap gap-2 m-3\">");

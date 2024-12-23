@@ -35,9 +35,9 @@ public class CompositionDaoImpl implements CompositionDao {
     @Override
     public void deleteComposition(int id) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            session.createQuery("delete Composition where id = :param")
-                    .setParameter("param", id)
-                    .executeUpdate();
+            session.beginTransaction();
+            session.delete(session.get(Composition.class, id));
+            session.getTransaction().commit();
         } catch (HibernateException e) {
             throw new RuntimeException(e);
         }

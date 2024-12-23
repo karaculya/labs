@@ -64,22 +64,15 @@ public class CompositionServlet extends HttpServlet {
         String action = request.getParameter("action");
         switch (action) {
             case "edit" -> {
-                System.out.println("edit");
-                String id = "", name = "", duration = "";
-                if (request.getParameter("id") == null) id = request.getParameter("id");
-                if (request.getParameter("name") == null) name = request.getParameter("name");
-                if (request.getParameter("duration") == null) duration = request.getParameter("duration");
+                System.out.println("edit post");
+                String id = request.getParameter("id");
+                String name = request.getParameter("name");
+                String duration = request.getParameter("duration");
+                System.out.println("id = " + id + ", name = " + name + ", duration = " + duration);
                 if (id != null && !id.isEmpty()) {
-                    System.out.println("ID is empty: " + id);
                     int compositionId = Integer.parseInt(id);
                     DaoFactory.getCompositionDao().updateComposition(compositionId, name, Time.valueOf(duration));
-                    if (request.getParameter("album_id") == null) {
-                        System.out.println("album_id is null");
-                        response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Don't' exists parameter album_id");
-                        return;
-                    }
-                    int albumId = Integer.parseInt(request.getParameter("album_id"));
-                    response.sendRedirect("compositions?id=" + albumId);
+                    response.sendRedirect("compositions?album_id=" + Integer.parseInt(request.getParameter("album_id")));
                 }
             }
             case "save" -> {
@@ -88,7 +81,8 @@ public class CompositionServlet extends HttpServlet {
                 if (request.getParameter("id") != null) id = Integer.parseInt(request.getParameter("id"));
                 if (request.getParameter("name") != null) name = request.getParameter("name");
                 if (request.getParameter("duration") != null) duration = request.getParameter("duration");
-                DaoFactory.getCompositionDao().createComposition(id, name, Time.valueOf(duration));
+                if (id != 0) DaoFactory.getCompositionDao()
+                        .createComposition(id, name, Time.valueOf(duration));
             }
         }
     }

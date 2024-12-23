@@ -72,7 +72,7 @@ public class AlbumServlet extends HttpServlet {
             case "save" -> {
                 String name = request.getParameter("name");
                 String genre = request.getParameter("genre");
-                int idArtist = Integer.parseInt(request.getParameter("id"));
+                int idArtist = Integer.parseInt(request.getParameter("artistId"));
                 DaoFactory.getAlbumDao().createAlbum(idArtist, name, genre);
             }
             default -> response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid action parameter");

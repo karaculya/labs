@@ -43,7 +43,7 @@
                         <input type="time" step="1" class="form-control" id="duration" name="duration" required>
                     </div>
                     <button type="button" class="btn btn-dark"
-                            onclick="createComposition(<%=request.getParameter("id")%>)">Add
+                            onclick="createComposition(<%=request.getParameter("album_id")%>)">Add
                     </button>
                 </form>
             </div>
@@ -143,7 +143,7 @@
                 url: 'compositions',
                 type: 'POST',
                 data: {
-                    'id': id,
+                    'album_id': id,
                     'action': 'save',
                     'name': name,
                     'duration': duration

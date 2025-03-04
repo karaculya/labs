@@ -8,7 +8,7 @@ import main.java.labs.exceptions.NoSuchModelNameException;
 import java.io.*;
 import java.util.Arrays;
 
-public class Car implements Transport {
+public class Car implements Transport, Cloneable {
     //  поле типа String, хранящее марку автомобиля,
     private String mark;
     private Model[] models;
@@ -22,18 +22,13 @@ public class Car implements Transport {
         }
     }
 
-/*
-    @Serial
-    public void writeObject(ObjectOutputStream oos) throws IOException {
-        oos.defaultWriteObject();
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        Car cloned = (Car) super.clone();
+        cloned.models = models.clone();
+        return cloned;
     }
 
-    @Serial
-    public Car readObject(ObjectInputStream ois) throws ClassNotFoundException, IOException {
-        ois.defaultReadObject();
-        return this;
-    }
-*/
     @Override
     public int getSize() {
         return this.models.length;
@@ -165,7 +160,7 @@ public class Car implements Transport {
     }
 
     //  внутренний класс Модель, имеющий поля название модели и её цену, а также конструктор (класс Автомобиль хранит массив Моделей),
-    private class Model implements Serializable {
+    private class Model implements Serializable, Cloneable {
 
         private String modelName;
         private double price;
@@ -173,6 +168,11 @@ public class Car implements Transport {
         Model(String modelName, double price) {
             this.modelName = modelName;
             this.price = price;
+        }
+
+        @Override
+        protected Object clone() throws CloneNotSupportedException {
+            return super.clone();
         }
     }
 }

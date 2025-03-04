@@ -13,12 +13,11 @@ import java.util.Date;
 
 Не забудьте менять значение этого поля при модификации объекта.
 */
-public class Motorbike implements Transport {
+public class Motorbike implements Transport, Cloneable {
     private int size;
     private Model head;
     private transient long lastModified;
     private String mark;
-
     {
         this.head = new Model("headModel", null, null, 101);
         this.head.prev = this.head;
@@ -47,6 +46,14 @@ public class Motorbike implements Transport {
                 prev = currentModel;
             }
         }
+    }
+
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        Motorbike cloned = (Motorbike) super.clone();
+        // Глубокое клонирование поля двигатель
+        cloned.head = (Model) head.clone();
+        return cloned;
     }
 
     @Override
@@ -221,7 +228,7 @@ public class Motorbike implements Transport {
                 '}';
     }
 
-    private class Model implements Serializable {
+    private class Model implements Serializable, Cloneable {
         String modelName;
         double price;
         Model prev;
@@ -232,6 +239,11 @@ public class Motorbike implements Transport {
             this.next = next;
             this.prev = prev;
             this.price = price;
+        }
+
+        @Override
+        protected Object clone() throws CloneNotSupportedException {
+            return super.clone();
         }
 
         @Override

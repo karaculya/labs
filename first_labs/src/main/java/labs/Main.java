@@ -1,81 +1,64 @@
 package main.java.labs;
 
 import main.java.labs.exceptions.DuplicateModelNameException;
-import main.java.labs.exceptions.NoSuchModelNameException;
 import main.java.labs.model.Car;
 import main.java.labs.model.Motorbike;
 import main.java.labs.model.Transport;
-import main.java.labs.threads.*;
+import main.java.labs.patterns.MotoFactory;
+import main.java.labs.utils.TransportUtils;
+import main.java.labs.patterns.Singleton;
 
-import java.io.IOException;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.locks.ReentrantLock;
+import java.util.Properties;
 
 public class Main {
-    public static void main(String[] args) throws DuplicateModelNameException, NoSuchModelNameException, IOException, ClassNotFoundException, InterruptedException {
-//        Transport car = new Car("Toyota", 10);
-//        Transport moto = new Motorbike("BMW", 10);
-
+    public static void main(String[] args) {
         /* Task 1
-        Thread nameThread = new NameThread(moto);
-        nameThread.setPriority(Thread.MAX_PRIORITY);
-
-        Thread priceThread = new PriceThread(moto);
-        priceThread.setPriority(Thread.MIN_PRIORITY);
-
-        nameThread.start();
-        priceThread.start();
+        Properties properties = Singleton.getInstance();
+        System.out.println(properties.getProperty("version"));
+        System.out.println(properties.getProperty("name"));
+        System.out.println(properties.getProperty("date"));
          */
 
-         /* Task 2
-        TransportSynchronizer transportSynchronizer = new TransportSynchronizer(car);
-        Thread thread = new Thread(new NameRunnable(transportSynchronizer));
-        thread.start();
-        Thread thread1 = new Thread(new PriceRunnable(transportSynchronizer));
-        thread1.start();
-          */
+        /* Task 2
+        Transport transport = TransportUtils.createInstance("auto", 3);
+        System.out.println(transport.getClass().getSimpleName());
+
+        TransportUtils.setTransportFactory(new MotoFactory());
+        transport = TransportUtils.createInstance("moto", 2);
+        System.out.println(transport.getClass().getSimpleName());
+         */
 
         /* Task 3
-        ReentrantLock reentrantLock = new ReentrantLock();
-        new Thread(new NameListRunnable(car.getModels(), reentrantLock)).start();
-        new Thread(new PriceListRunnable(car.getPrices(), reentrantLock)).start();
+
          */
+        try {
+            /* Car
+            Car car = new Car("auto", 2);
+            Car clonedCar = (Car) car.clone();
+            System.out.println("Оригинальный автомобиль: " + car);
+            System.out.println("Клонированный автомобиль: " + clonedCar);
 
-        /* Task 4
-        Transport[] transports = {
-                car,
-                moto,
-                new Car("Mazda", 0),
-                new Motorbike("Yamaha", 0)
-        };
-
-        ExecutorService threadPool = Executors.newFixedThreadPool(2);
-
-        for (Transport transport : transports)
-            threadPool.submit(new MarkRunnable(transport.getMark()));
-        threadPool.shutdown();
-         */
-
-        /* Task 5
-        BlockingQueue queue = new ArrayBlockingQueue(2);
-        String[] files = {"first_labs\\src\\main\\resources\\1.txt",
-                "first_labs\\src\\main\\resources\\2.txt",
-                "first_labs\\src\\main\\resources\\3.txt",
-                "first_labs\\src\\main\\resources\\4.txt",
-                "first_labs\\src\\main\\resources\\5.txt"};
-
-        for (String fileName : files) {
-            new Thread(new CarCreator(fileName, queue)).start();
+            clonedCar.addNewModel("Niva", 50);
+            System.out.println("Модели оригинального автомобиля: ");
+            TransportUtils.printAllModelNames(car);
+            System.out.println("Модели клонированного автомобиля: ");
+            TransportUtils.printAllModelNames(clonedCar);
+             */
+//            /* Moto
+            Motorbike moto = new Motorbike("moto", 3);
+            Motorbike clonedMoto = (Motorbike) moto.clone();
+            System.out.println("Оригинальный мотоцикл: " + moto);
+            System.out.println("Клонированный мотоцикл: " + clonedMoto);
+            clonedMoto.addNewModel("Niva", 50);
+            System.out.println("Модели оригинального мотоцикла: ");
+            TransportUtils.printAllModelNames(moto);
+            System.out.println("Модели клонированного мотоцикла: ");
+            TransportUtils.printAllModelNames(clonedMoto);
+//             */
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeException(e);
+        } catch (DuplicateModelNameException e) {
+            throw new RuntimeException(e);
         }
-
-        Thread.sleep(1000);
-
-        while (!queue.isEmpty()) {
-            System.out.println("5. " + queue.take());
-        }
-         */
     }
 }

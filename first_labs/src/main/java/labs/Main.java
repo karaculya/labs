@@ -1,81 +1,94 @@
 package main.java.labs;
 
 import main.java.labs.exceptions.DuplicateModelNameException;
-import main.java.labs.exceptions.NoSuchModelNameException;
 import main.java.labs.model.Car;
 import main.java.labs.model.Motorbike;
 import main.java.labs.model.Transport;
-import main.java.labs.threads.*;
+import main.java.labs.patterns.creational.MotoFactory;
+import main.java.labs.patterns.creational.Singleton;
+import main.java.labs.patterns.structural.Adapter;
+import main.java.labs.server.ClientHandler;
+import main.java.labs.utils.TransportUtils;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.locks.ReentrantLock;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.util.Arrays;
+import java.util.Properties;
 
 public class Main {
-    public static void main(String[] args) throws DuplicateModelNameException, NoSuchModelNameException, IOException, ClassNotFoundException, InterruptedException {
-//        Transport car = new Car("Toyota", 10);
-//        Transport moto = new Motorbike("BMW", 10);
-
+    public static void main(String[] args) {
         /* Task 1
-        Thread nameThread = new NameThread(moto);
-        nameThread.setPriority(Thread.MAX_PRIORITY);
-
-        Thread priceThread = new PriceThread(moto);
-        priceThread.setPriority(Thread.MIN_PRIORITY);
-
-        nameThread.start();
-        priceThread.start();
+        Properties properties = Singleton.getInstance();
+        System.out.println(properties.getProperty("version"));
+        System.out.println(properties.getProperty("name"));
+        System.out.println(properties.getProperty("date"));
          */
 
-         /* Task 2
-        TransportSynchronizer transportSynchronizer = new TransportSynchronizer(car);
-        Thread thread = new Thread(new NameRunnable(transportSynchronizer));
-        thread.start();
-        Thread thread1 = new Thread(new PriceRunnable(transportSynchronizer));
-        thread1.start();
-          */
+        /* Task 2
+        Transport transport = TransportUtils.createInstance("auto", 3);
+        System.out.println(transport.getClass().getSimpleName());
 
-        /* Task 3
-        ReentrantLock reentrantLock = new ReentrantLock();
-        new Thread(new NameListRunnable(car.getModels(), reentrantLock)).start();
-        new Thread(new PriceListRunnable(car.getPrices(), reentrantLock)).start();
+        TransportUtils.setTransportFactory(new MotoFactory());
+        transport = TransportUtils.createInstance("moto", 2);
+        System.out.println(transport.getClass().getSimpleName());
          */
 
-        /* Task 4
-        Transport[] transports = {
-                car,
-                moto,
-                new Car("Mazda", 0),
-                new Motorbike("Yamaha", 0)
-        };
+//        /* Task 3
+        try {
+            Car car = new Car("auto", 2);
+            Car clonedCar = car.clone();
+            printOriginalAndClone(car, clonedCar);
+            clonedCar.addNewModel("newModelName", 30);
+            printOriginalAndClone(car, clonedCar);
 
-        ExecutorService threadPool = Executors.newFixedThreadPool(2);
-
-        for (Transport transport : transports)
-            threadPool.submit(new MarkRunnable(transport.getMark()));
-        threadPool.shutdown();
-         */
-
-        /* Task 5
-        BlockingQueue queue = new ArrayBlockingQueue(2);
-        String[] files = {"first_labs\\src\\main\\resources\\1.txt",
-                "first_labs\\src\\main\\resources\\2.txt",
-                "first_labs\\src\\main\\resources\\3.txt",
-                "first_labs\\src\\main\\resources\\4.txt",
-                "first_labs\\src\\main\\resources\\5.txt"};
-
-        for (String fileName : files) {
-            new Thread(new CarCreator(fileName, queue)).start();
+            Motorbike moto = new Motorbike("moto", 3);
+            Motorbike clonedMoto = moto.clone();
+            printOriginalAndClone(moto, clonedMoto);
+            clonedMoto.addNewModel("newModelName", 30);
+            printOriginalAndClone(moto, clonedMoto);
+        } catch (DuplicateModelNameException e) {
+            throw new RuntimeException(e);
         }
+//             */
+        /* Task 2.1
+        String[] originalStrings = {"Hello", "World", "Java"};
 
-        Thread.sleep(1000);
+        try {
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            Adapter.writeStringsToOutputStream(originalStrings, outputStream);
+            System.out.println(outputStream);
 
-        while (!queue.isEmpty()) {
-            System.out.println("5. " + queue.take());
+            ByteArrayInputStream inputStream = new ByteArrayInputStream(outputStream.toByteArray());
+            String[] readStrings = Adapter.readStringsFromInputStream(inputStream);
+
+            System.out.println(Arrays.toString(readStrings));
+        } catch (IOException e) {
+            e.printStackTrace();
         }
          */
+
+        /* Task 2.2
+        System.out.println(TransportUtils.synchronizedTransport(new Car("lada", 2))
+                .getClass().getSimpleName());
+         */
+        /* Task 2.4
+        try (ServerSocket serverSocket = new ServerSocket(5000)) {
+            System.out.println("Сервер запущен и ожидает подключения...");
+            while (true) {
+                Socket socket = serverSocket.accept();
+                new ClientHandler(socket).start();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+         */
+    }
+
+    private static void printOriginalAndClone(Transport transport, Transport clonedTransport) {
+        System.out.println("Original: " + transport.getMark() + " " + Arrays.toString(transport.getModels()));
+        System.out.println("Clone: " + clonedTransport.getMark() + " " + Arrays.toString(clonedTransport.getModels()));
     }
 }

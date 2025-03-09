@@ -6,8 +6,6 @@ import main.java.labs.model.Motorbike;
 import main.java.labs.model.Transport;
 import main.java.labs.patterns.creational.MotoFactory;
 import main.java.labs.patterns.creational.Singleton;
-import main.java.labs.patterns.structural.Adapter;
-import main.java.labs.server.ClientHandler;
 import main.java.labs.utils.TransportUtils;
 
 import java.io.ByteArrayInputStream;

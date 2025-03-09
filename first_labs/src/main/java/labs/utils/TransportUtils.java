@@ -4,8 +4,8 @@ import main.java.labs.exceptions.DuplicateModelNameException;
 import main.java.labs.model.Car;
 import main.java.labs.model.Motorbike;
 import main.java.labs.model.Transport;
-import main.java.labs.patterns.AutoFactory;
-import main.java.labs.patterns.TransportFactory;
+import main.java.labs.patterns.creational.AutoFactory;
+import main.java.labs.patterns.creational.TransportFactory;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;

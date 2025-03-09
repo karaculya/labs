@@ -1,4 +1,4 @@
-package main.java.labs.patterns;
+package main.java.labs.patterns.creational;
 
 import main.java.labs.model.Motorbike;
 import main.java.labs.model.Transport;

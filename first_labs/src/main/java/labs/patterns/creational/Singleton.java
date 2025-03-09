@@ -1,4 +1,4 @@
-package main.java.labs.patterns;
+package main.java.labs.patterns.creational;
 
 import java.io.FileInputStream;
 import java.io.IOException;

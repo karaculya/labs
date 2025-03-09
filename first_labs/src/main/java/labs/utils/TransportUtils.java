@@ -4,11 +4,25 @@ import main.java.labs.exceptions.DuplicateModelNameException;
 import main.java.labs.model.Car;
 import main.java.labs.model.Motorbike;
 import main.java.labs.model.Transport;
+import main.java.labs.threads.DecoratorSynchronizedTransport;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 
 public class TransportUtils {
+//    private static TransportFactory factory = new AutoFactory();
+
+    public static Transport synchronizedTransport(Transport t) {
+        return new DecoratorSynchronizedTransport(t);
+    }
+
+//    public static void setTransportFactory(TransportFactory factory) {
+//        TransportUtils.factory = factory;
+//    }
+
+//    public static Transport createInstance(String name, int size) {
+//        return factory.createInstance(name, size);
+//    }
 
     public static double avg(Transport transport) {
         double count = 0;

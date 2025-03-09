@@ -49,10 +49,9 @@ public class Motorbike implements Transport, Cloneable {
     }
 
     @Override
-    public Object clone() throws CloneNotSupportedException {
-        Motorbike cloned = (Motorbike) super.clone();
-        // Глубокое клонирование поля двигатель
-        cloned.head = (Model) head.clone();
+    public Motorbike clone() {
+        Motorbike cloned = new Motorbike(this.mark, this.size);
+        cloned.setHead(this.head);
         return cloned;
     }
 
@@ -228,7 +227,7 @@ public class Motorbike implements Transport, Cloneable {
                 '}';
     }
 
-    private class Model implements Serializable, Cloneable {
+    private class Model implements Serializable {
         String modelName;
         double price;
         Model prev;
@@ -239,11 +238,6 @@ public class Motorbike implements Transport, Cloneable {
             this.next = next;
             this.prev = prev;
             this.price = price;
-        }
-
-        @Override
-        protected Object clone() throws CloneNotSupportedException {
-            return super.clone();
         }
 
         @Override

@@ -5,7 +5,7 @@ import main.java.labs.exceptions.NoSuchModelNameException;
 
 import java.io.Serializable;
 
-public interface Transport extends Serializable {
+public interface Transport extends Serializable, Cloneable {
     //  1. метод для получения размера массива Моделей.
     int getSize();
     //  2. метод добавления названия модели и её цены (путем создания нового массива Моделей), использовать метод Arrays.copyOf(),
@@ -27,4 +27,6 @@ public interface Transport extends Serializable {
     String getMark();
     //  10. метод для модификации марки автомобиля,
     void setMark(String mark);
+
+    Transport clone();
 }

@@ -4,10 +4,18 @@ import main.java.labs.exceptions.DuplicateModelNameException;
 import main.java.labs.model.Car;
 import main.java.labs.model.Motorbike;
 import main.java.labs.model.Transport;
-import main.java.labs.patterns.MotoFactory;
+import main.java.labs.patterns.creational.MotoFactory;
+import main.java.labs.patterns.creational.Singleton;
+import main.java.labs.patterns.structural.Adapter;
+import main.java.labs.server.ClientHandler;
 import main.java.labs.utils.TransportUtils;
-import main.java.labs.patterns.Singleton;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.util.Arrays;
 import java.util.Properties;
 
 public class Main {
@@ -28,37 +36,59 @@ public class Main {
         System.out.println(transport.getClass().getSimpleName());
          */
 
-        /* Task 3
-
-         */
+//        /* Task 3
         try {
-            /* Car
             Car car = new Car("auto", 2);
-            Car clonedCar = (Car) car.clone();
-            System.out.println("Оригинальный автомобиль: " + car);
-            System.out.println("Клонированный автомобиль: " + clonedCar);
+            Car clonedCar = car.clone();
+            printOriginalAndClone(car, clonedCar);
+            clonedCar.addNewModel("newModelName", 30);
+            printOriginalAndClone(car, clonedCar);
 
-            clonedCar.addNewModel("Niva", 50);
-            System.out.println("Модели оригинального автомобиля: ");
-            TransportUtils.printAllModelNames(car);
-            System.out.println("Модели клонированного автомобиля: ");
-            TransportUtils.printAllModelNames(clonedCar);
-             */
-//            /* Moto
             Motorbike moto = new Motorbike("moto", 3);
-            Motorbike clonedMoto = (Motorbike) moto.clone();
-            System.out.println("Оригинальный мотоцикл: " + moto);
-            System.out.println("Клонированный мотоцикл: " + clonedMoto);
-            clonedMoto.addNewModel("Niva", 50);
-            System.out.println("Модели оригинального мотоцикла: ");
-            TransportUtils.printAllModelNames(moto);
-            System.out.println("Модели клонированного мотоцикла: ");
-            TransportUtils.printAllModelNames(clonedMoto);
-//             */
-        } catch (CloneNotSupportedException e) {
-            throw new RuntimeException(e);
+            Motorbike clonedMoto = moto.clone();
+            printOriginalAndClone(moto, clonedMoto);
+            clonedMoto.addNewModel("newModelName", 30);
+            printOriginalAndClone(moto, clonedMoto);
         } catch (DuplicateModelNameException e) {
             throw new RuntimeException(e);
         }
+//             */
+        /* Task 2.1
+        String[] originalStrings = {"Hello", "World", "Java"};
+
+        try {
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            Adapter.writeStringsToOutputStream(originalStrings, outputStream);
+            System.out.println(outputStream);
+
+            ByteArrayInputStream inputStream = new ByteArrayInputStream(outputStream.toByteArray());
+            String[] readStrings = Adapter.readStringsFromInputStream(inputStream);
+
+            System.out.println(Arrays.toString(readStrings));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+         */
+
+        /* Task 2.2
+        System.out.println(TransportUtils.synchronizedTransport(new Car("lada", 2))
+                .getClass().getSimpleName());
+         */
+        /* Task 2.4
+        try (ServerSocket serverSocket = new ServerSocket(5000)) {
+            System.out.println("Сервер запущен и ожидает подключения...");
+            while (true) {
+                Socket socket = serverSocket.accept();
+                new ClientHandler(socket).start();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+         */
+    }
+
+    private static void printOriginalAndClone(Transport transport, Transport clonedTransport) {
+        System.out.println("Original: " + transport.getMark() + " " + Arrays.toString(transport.getModels()));
+        System.out.println("Clone: " + clonedTransport.getMark() + " " + Arrays.toString(clonedTransport.getModels()));
     }
 }

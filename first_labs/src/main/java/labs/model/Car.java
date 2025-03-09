@@ -23,10 +23,8 @@ public class Car implements Transport, Cloneable {
     }
 
     @Override
-    public Object clone() throws CloneNotSupportedException {
-        Car cloned = (Car) super.clone();
-        cloned.models = models.clone();
-        return cloned;
+    public Car clone() {
+        return new Car(this.mark, this.models.length);
     }
 
     @Override
@@ -160,7 +158,7 @@ public class Car implements Transport, Cloneable {
     }
 
     //  внутренний класс Модель, имеющий поля название модели и её цену, а также конструктор (класс Автомобиль хранит массив Моделей),
-    private class Model implements Serializable, Cloneable {
+    private class Model implements Serializable {
 
         private String modelName;
         private double price;
@@ -168,11 +166,6 @@ public class Car implements Transport, Cloneable {
         Model(String modelName, double price) {
             this.modelName = modelName;
             this.price = price;
-        }
-
-        @Override
-        protected Object clone() throws CloneNotSupportedException {
-            return super.clone();
         }
     }
 }

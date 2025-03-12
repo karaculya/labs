@@ -2,6 +2,7 @@ package main.java.labs.model;
 
 import main.java.labs.exceptions.DuplicateModelNameException;
 import main.java.labs.exceptions.NoSuchModelNameException;
+import main.java.labs.patterns.behavioral.Visitor;
 
 import java.io.Serializable;
 
@@ -27,4 +28,5 @@ public interface Transport extends Serializable {
     String getMark();
     //  10. метод для модификации марки автомобиля,
     void setMark(String mark);
+    void accept(Visitor visitor);
 }

@@ -1,49 +1,58 @@
 package main.java.labs;
 
 import main.java.labs.model.Car;
-import main.java.labs.patterns.structural.Adapter;
-import main.java.labs.server.ClientHandler;
-import main.java.labs.utils.TransportUtils;
+import main.java.labs.model.Motorbike;
+import main.java.labs.patterns.behavioral.*;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.util.Arrays;
+import java.util.Iterator;
 
 public class Main {
-    public static void main(String[] args) {
-        /* Task 1
-        String[] originalStrings = {"Hello", "World", "Java"};
+    public static void main(String[] args) throws IOException {
+//        /* 3.1
+        Car car = new Car("car model", 4);
+//        /*
+        ChainOfResponsibility writerTransport = new WriterRows();
+        writerTransport.writeTransport(new Motorbike("moto model", 2));
+        writerTransport.setNextChainOfResponsibility(new WriterColumns());
+        writerTransport.writeTransport(car);
+//         */
+//        /* 3.2
+        car.setPrintCommand(new CommandColumns());
+        car.print(new FileWriter("first_labs/src/main/resources/3.txt"));
 
+        car.setPrintCommand(new CommandRows());
+        car.print(new FileWriter("first_labs/src/main/resources/4.txt"));
+//         */
+//        /* 3.3
+        Iterator<Car.Model> iterator = car.iterator();
+
+        while (iterator.hasNext()) {
+            Car.Model model = iterator.next();
+            System.out.println(model);
+        }
+//         */
+//        /* 3.4
         try {
-            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-            Adapter.writeStringsToOutputStream(originalStrings, outputStream);
-            System.out.println(outputStream);
+            System.out.println("Original Car: " + car);
+            Car.Memento memento = car.createMemento();
+            car.setMark("Honda");
+            System.out.println("Modified Car: " + car);
 
-            ByteArrayInputStream inputStream = new ByteArrayInputStream(outputStream.toByteArray());
-            String[] readStrings = Adapter.readStringsFromInputStream(inputStream);
-            System.out.println(Arrays.toString(readStrings));
-        } catch (IOException e) {
+            car.setMemento(memento);
+            System.out.println("Restored Car: " + car);
+        } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
-         */
-
-        /* Task 2
-        System.out.println(TransportUtils.synchronizedTransport(new Car("lada", 2))
-                .getClass().getSimpleName());
-         */
-        /* Task 4
-        try (ServerSocket serverSocket = new ServerSocket(5000)) {
-            System.out.println("Сервер запущен и ожидает подключения...");
-            while (true) {
-                Socket socket = serverSocket.accept();
-                new ClientHandler(socket).start();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-         */
+//         */
+//        /* 3.5 - 3.8
+//        todo
+//         */
+//        /* 3.9
+        Visitor visitor = new PrintVisitor();
+        car.accept(visitor);
+        new Motorbike("moto", 3).accept(visitor);
+//         */
     }
 }

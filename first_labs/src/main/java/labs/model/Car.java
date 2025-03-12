@@ -4,14 +4,19 @@ package main.java.labs.model;
 import main.java.labs.exceptions.DuplicateModelNameException;
 import main.java.labs.exceptions.ModelPriceOutOfBoundsException;
 import main.java.labs.exceptions.NoSuchModelNameException;
+import main.java.labs.patterns.behavioral.Command;
+import main.java.labs.patterns.behavioral.Visitor;
 
 import java.io.*;
 import java.util.Arrays;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 public class Car implements Transport {
     //  поле типа String, хранящее марку автомобиля,
     private String mark;
     private Model[] models;
+    private transient Command command;
 
     //  Конструктор класса должен принимать в качестве параметров значение Марки автомобиля и размер массива Моделей.
     public Car(String mark, int modelsSize) {
@@ -22,18 +27,6 @@ public class Car implements Transport {
         }
     }
 
-/*
-    @Serial
-    public void writeObject(ObjectOutputStream oos) throws IOException {
-        oos.defaultWriteObject();
-    }
-
-    @Serial
-    public Car readObject(ObjectInputStream ois) throws ClassNotFoundException, IOException {
-        ois.defaultReadObject();
-        return this;
-    }
-*/
     @Override
     public int getSize() {
         return this.models.length;
@@ -141,6 +134,11 @@ public class Car implements Transport {
     }
 
     @Override
+    public void accept(Visitor visitor) {
+        visitor.visit(this);
+    }
+
+    @Override
     public double[] getPrices() {
         double[] array = new double[getSize()];
         for (int i = 0; i < getSize(); i++)
@@ -164,8 +162,66 @@ public class Car implements Transport {
                 '}';
     }
 
+    public void print(Writer out) {
+        command.writeCar(this, out);
+    }
+
+    public void setPrintCommand(Command command) {
+        this.command = command;
+    }
+
+    private class AutoIterator implements Iterator<Model> {
+        private int currentIndex = 0;
+
+        @Override
+        public boolean hasNext() {
+            return currentIndex < models.length;
+        }
+
+        @Override
+        public Model next() {
+            if (!hasNext()) {
+                throw new NoSuchElementException();
+            }
+            return models[currentIndex++];
+        }
+    }
+
+    public Iterator<Model> iterator() {
+        return new AutoIterator();
+    }
+
+    public static class Memento {
+        private byte[] state;
+        private void setAuto(Car car) throws IOException {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            ObjectOutputStream oos = new ObjectOutputStream(baos);
+            oos.writeObject(car);
+            oos.close();
+            this.state = baos.toByteArray();
+        }
+
+        private Car getAuto() throws IOException, ClassNotFoundException {
+            ByteArrayInputStream bais = new ByteArrayInputStream(this.state);
+            ObjectInputStream ois = new ObjectInputStream(bais);
+            return (Car) ois.readObject();
+        }
+    }
+
+    public Memento createMemento() throws IOException {
+        Memento memento = new Memento();
+        memento.setAuto(this);
+        return memento;
+    }
+
+    public void setMemento(Memento memento) throws IOException, ClassNotFoundException {
+        Car savedCar = memento.getAuto();
+        this.mark = savedCar.mark;
+        this.models = savedCar.models;
+    }
+
     //  внутренний класс Модель, имеющий поля название модели и её цену, а также конструктор (класс Автомобиль хранит массив Моделей),
-    private class Model implements Serializable {
+    public static class Model implements Serializable {
 
         private String modelName;
         private double price;
@@ -173,6 +229,14 @@ public class Car implements Transport {
         Model(String modelName, double price) {
             this.modelName = modelName;
             this.price = price;
+        }
+
+        @Override
+        public String toString() {
+            return "Model{" +
+                    "modelName='" + modelName + '\'' +
+                    ", price=" + price +
+                    '}';
         }
     }
 }

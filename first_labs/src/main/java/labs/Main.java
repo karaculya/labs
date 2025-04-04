@@ -46,18 +46,15 @@ public class Main {
             throw new RuntimeException(e);
         }
 //         */
-        /* 3.5 - 3.6
-        todo
-         */
-//        /* 3.7
-        /*
-        int[] array = {1, 2, 3, 4, 2, 3, 1, 2};
-        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("first_labs/src/main/resources/5.txt"))) {
-            oos.writeObject(array);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        */
+        /* 3.7
+
+//        int[] array = {1, 2, 3, 4, 2, 3, 1, 2};
+//        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("first_labs/src/main/resources/5.txt"))) {
+//            oos.writeObject(array);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+
 
         if (args.length == 0) {
             System.out.println("args don't exist file path");
@@ -84,9 +81,6 @@ public class Main {
             duration = endTime - startTime;
             System.out.println("Result: " + result + " for time: " + duration);
         }
-//         */
-        /* 3.8
-        todo
          */
         /* 3.9
         Visitor visitor = new PrintVisitor();

@@ -3,6 +3,7 @@ package main.java.labs.model;
 import main.java.labs.exceptions.DuplicateModelNameException;
 import main.java.labs.exceptions.ModelPriceOutOfBoundsException;
 import main.java.labs.exceptions.NoSuchModelNameException;
+import main.java.labs.patterns.behavioral.Visitor;
 
 import java.io.*;
 import java.util.Date;
@@ -189,6 +190,11 @@ public class Motorbike implements Transport {
     @Override
     public void setMark(String mark) {
         this.mark = mark;
+    }
+
+    @Override
+    public void accept(Visitor visitor) {
+        visitor.visit(this);
     }
 
     public long getLastModified() {

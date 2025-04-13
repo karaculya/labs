@@ -3,6 +3,7 @@ package main.java.labs.threads;
 import main.java.labs.exceptions.DuplicateModelNameException;
 import main.java.labs.exceptions.NoSuchModelNameException;
 import main.java.labs.model.Transport;
+import main.java.labs.patterns.behavioral.Visitor;
 
 public class DecoratorSynchronizedTransport implements Transport {
     private Transport transport;
@@ -59,6 +60,11 @@ public class DecoratorSynchronizedTransport implements Transport {
     @Override
     public synchronized void setMark(String mark) {
         transport.setMark(mark);
+    }
+
+    @Override
+    public synchronized void accept(Visitor visitor) {
+        transport.accept(visitor);
     }
 
     @Override

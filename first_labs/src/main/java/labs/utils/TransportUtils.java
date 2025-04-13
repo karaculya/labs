@@ -129,6 +129,24 @@ public class TransportUtils {
         writer.flush();
     }
 
+    public static void writeTransportToRow(Transport v, Writer writer) throws IOException {
+        writer.write(v.getClass().getSimpleName());
+        writer.write(v.getMark());
+        writer.write(v.getSize());
+
+        if (v.getSize() > 0) {
+            String[] modelNames = v.getModels();
+            for (String modelName : modelNames)
+                writer.write(modelName);
+
+            double[] modelPrices = v.getPrices();
+            for (double modelPrice : modelPrices)
+                writer.write(String.valueOf(modelPrice));
+        }
+        System.out.println("Success symbol writing object");
+        writer.flush();
+    }
+
     //- чтения информации о транспортном средстве из символьного потока (использовать BufferedReader или StreamTokenizer)
     public static Transport readTransport(Reader in) {
         Transport transport = null;

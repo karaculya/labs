@@ -6,6 +6,7 @@ import main.java.labs.model.Motorbike;
 import main.java.labs.model.Transport;
 import main.java.labs.patterns.creational.AutoFactory;
 import main.java.labs.patterns.creational.TransportFactory;
+import main.java.labs.threads.DecoratorSynchronizedTransport;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -19,6 +20,10 @@ public class TransportUtils {
 
     public static Transport createInstance(String name, int size) {
         return factory.createInstance(name, size);
+    }
+
+    public static Transport synchronizedTransport(Transport t) {
+        return new DecoratorSynchronizedTransport(t);
     }
 
     public static double avg(Transport transport) {

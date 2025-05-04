@@ -5,17 +5,14 @@ import main.java.labs.exceptions.NoSuchModelNameException;
 import main.java.labs.model.Car;
 import main.java.labs.model.Motorbike;
 import main.java.labs.model.Transport;
-import main.java.labs.patterns.creational.MotoFactory;
-import main.java.labs.patterns.creational.Singleton;
-import main.java.labs.utils.TransportUtils;
+import main.java.labs.threads.*;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.util.Arrays;
-import java.util.Properties;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class Main {
     public static void main(String[] args) {
@@ -24,6 +21,20 @@ public class Main {
         System.out.println(properties.getProperty("version"));
         System.out.println(properties.getProperty("name"));
         System.out.println(properties.getProperty("date"));
+        // another task
+        String[] originalStrings = {"Hello", "World", "Java"};
+
+        try {
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            Adapter.writeStringsToOutputStream(originalStrings, outputStream);
+            System.out.println(outputStream);
+
+            ByteArrayInputStream inputStream = new ByteArrayInputStream(outputStream.toByteArray());
+            String[] readStrings = Adapter.readStringsFromInputStream(inputStream);
+            System.out.println(Arrays.toString(readStrings));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
          */
 
         /* Task 2
@@ -33,7 +44,19 @@ public class Main {
         TransportUtils.setTransportFactory(new MotoFactory());
         transport = TransportUtils.createInstance("moto", 2);
         System.out.println(transport.getClass().getSimpleName());
+        /* Task 2
+        System.out.println(TransportUtils.synchronizedTransport(new Car("lada", 2))
+                .getClass().getSimpleName());
          */
+        /* Task 4
+        try (ServerSocket serverSocket = new ServerSocket(5000)) {
+            System.out.println("Сервер запущен и ожидает подключения...");
+            while (true) {
+                Socket socket = serverSocket.accept();
+                new ClientHandler(socket).start();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
 
 //        /* Task 3
         try {

@@ -28,5 +28,5 @@ public interface Transport extends Serializable, Cloneable {
     //  10. метод для модификации марки автомобиля,
     void setMark(String mark);
 
-    Transport clone();
+    Transport clone() throws CloneNotSupportedException;
 }

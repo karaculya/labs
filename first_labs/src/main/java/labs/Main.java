@@ -1,6 +1,7 @@
 package main.java.labs;
 
 import main.java.labs.exceptions.DuplicateModelNameException;
+import main.java.labs.exceptions.NoSuchModelNameException;
 import main.java.labs.model.Car;
 import main.java.labs.model.Motorbike;
 import main.java.labs.model.Transport;
@@ -36,18 +37,20 @@ public class Main {
 
 //        /* Task 3
         try {
-            Car car = new Car("auto", 2);
+            Car car = new Car("audi", 2);
             Car clonedCar = car.clone();
             printOriginalAndClone(car, clonedCar);
-            clonedCar.addNewModel("newModelName", 30);
+            clonedCar.setModelName("name1", "model1");
             printOriginalAndClone(car, clonedCar);
+
+            System.out.println("---------------------------------------");
 
             Motorbike moto = new Motorbike("moto", 3);
             Motorbike clonedMoto = moto.clone();
             printOriginalAndClone(moto, clonedMoto);
-            clonedMoto.addNewModel("newModelName", 30);
+            clonedMoto.setModelName("name1", "model1");
             printOriginalAndClone(moto, clonedMoto);
-        } catch (DuplicateModelNameException e) {
+        } catch (DuplicateModelNameException | NoSuchModelNameException | CloneNotSupportedException e) {
             throw new RuntimeException(e);
         }
 //             */

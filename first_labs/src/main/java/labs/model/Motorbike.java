@@ -4,7 +4,7 @@ import main.java.labs.exceptions.DuplicateModelNameException;
 import main.java.labs.exceptions.ModelPriceOutOfBoundsException;
 import main.java.labs.exceptions.NoSuchModelNameException;
 
-import java.io.*;
+import java.io.Serializable;
 import java.util.Date;
 
 /*
@@ -13,7 +13,7 @@ import java.util.Date;
 
 Не забудьте менять значение этого поля при модификации объекта.
 */
-public class Motorbike implements Transport, Cloneable {
+public class Motorbike implements Transport {
     private int size;
     private Model head;
     private transient long lastModified;
@@ -49,9 +49,23 @@ public class Motorbike implements Transport, Cloneable {
     }
 
     @Override
-    public Motorbike clone() {
-        Motorbike cloned = new Motorbike(this.mark, this.size);
-        cloned.setHead(this.head);
+    public Motorbike clone() throws CloneNotSupportedException {
+        Motorbike cloned = (Motorbike) super.clone();
+        cloned.head = new Model("headModel", null, null, 101);
+        cloned.head.next = cloned.head;
+        cloned.head.prev = cloned.head;
+        Model original = this.head.next;
+        Model clone = cloned.head.next;
+        while (original!=this.head){
+            Model current = (Model) original.clone();
+            Model last = cloned.head.prev;
+            last.next = current;
+            current.prev = last;
+            current.next = cloned.head;
+            cloned.head.prev = current;
+            clone = clone.next;
+            original = original.next;
+        }
         return cloned;
     }
 
@@ -227,7 +241,7 @@ public class Motorbike implements Transport, Cloneable {
                 '}';
     }
 
-    private class Model implements Serializable {
+    private class Model implements Serializable, Cloneable {
         String modelName;
         double price;
         Model prev;
@@ -238,6 +252,10 @@ public class Motorbike implements Transport, Cloneable {
             this.next = next;
             this.prev = prev;
             this.price = price;
+        }
+        @Override
+        protected Object clone() throws CloneNotSupportedException {
+            return super.clone();
         }
 
         @Override

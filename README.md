@@ -1,554 +1,1570 @@
-# Вопросы
+### Design patterns
 
-## Вопросы к 8 лабе:
+1. Порождающие паттерны
 
-1. ORM. Достоинства и недостатки. Hibernate. Файл hibernate.cfg.xml. Пример. 
-> ORM (Object-relational mapping) — это отображение объектов какого-либо объектно-ориентированного языка в структуры реляционных баз данных.
-> 
-> **Преимущества ORM**
-> - Нет необходимости писать рутинные insert/update/delete/select для CRUD(create, read, update, delete) операций. 
-> - Условия связи между объектами (строками таблиц) указываются декларативно в одном месте. 
-> - Возможность использовать полиморфные запросы для иерархий классов. 
-> - Высокая степень независимости от конкретной СУБД.
-> 
-> **Недостатки ORM**
-> - Возможны проблемы с производительностью для сложных запросов на объектном SQL. 
-> - Затрудняет использование специфических конструкций языка SQL конкретной СУБД. 
-> - Потеря объектно-реляционного соответствия.
-> 
-> ORM-решением для языка Java является технология Hibernate, которая не только связывает Java классы с таблицами базы данных, но также предоставляет средства для автоматического построения запросов и извлечения данных и может значительно уменьшить время разработки, которое обычно тратится на ручное написание SQL и JDBC кода. Hibernate генерирует SQL вызовы и освобождает разработчика от ручной обработки результирующего набора данных и конвертации объектов.
-> 
-> Mapping (сопоставление, проецирование) Java-классов с таблицами БД осуществляется с помощью конфигурационных XML файлов или Java-аннотаций. Обеспечиваются возможности по организации отношений между классами «один-ко-многим» и «многие-ко-многим».
-Для применения Hibernate на практике во-первых, необходимо описать XML файл, содержащий информацию о настройках связи с БД и о способе Mapping. Располагаться он должен в самом корне дерева классов.
+    1.1. Singleton
+   - в классе объявляем поле того класса который должен быть синглтон 
+   - добавляем пустой приватный конструктор 
+   - добавляем метод который создает объект, если поле null, в ином случае - возвращает имеющийся
 
-**Файл hibernate.cfg.xml.**
- ```xml 
-<hibernate-configuration>
-    <session-factory>
-        <!-- PostgreSQL connection settings -->
-        <property name="connection.driver_class">org.postgresql.Driver</property>
- <property name="connection.url">jdbc:postgresql://localhost:5433/orm</property>
-        <property name="connection.username">postgres</property>
-        <property name="connection.password">sa</property>
-      <property name="dialect">org.hibernate.dialect.PostgreSQLDialect</property>
-        <property name="hbm2ddl.auto">update</property>
-
-        <!-- Other hibernate settings -->
-        <property name="show_sql">true</property>
-
-        <!-- Annotated classes (Mapping from Annotations) -->
-        <mapping package="ssau.lr8.model"/>
-        <mapping class="ssau.lr8.model.Artist"/>
-        <mapping class="ssau.lr8.model.Album"/>
-        <mapping class="ssau.lr8.model.Composition"/>
-
-        <!-- Mapping from configuration file (as an alternative to annotations) -->
-        <!--<mapping resource="mapping.hbm.xml"/>-->
-    </session-factory>
-</hibernate-configuration>
- ```
-> - connection.driver_class Показывает класс драйвера, который используется для соединения с базой данных. 
-> - connection.url –URL для соединения с базой данных. 
-> - connection.username – логин к базе данных. 
-> - connection.password – пароль к базе данных. 
-> - dialect – т.к. Hibernate может работать с разными базами данных, и каждая имеет какие-то особенности (генерация первичного ключа, страничный вывод, функции), нам надо указать, с какой базой мы работаем. В данном случае у нас PostgreSQL, что мы и указываем. 
-> - hbm2ddl.auto - свойство, которое указывается что нужно сделать со схемой БД при инициализации. Может принимать такие значения:  
-> **update** - сверяет схему БД с имеющимися конфигурациями классов, если мы внесли какие-то изменения, они автоматически заносятся в БД. При этом данные, которые были занесены в базу не изменятся - даже, если мы решили удалить некоторые поля из таблицы, они все одно останутся;   
-> **create** - каждый раз при запуске приложения, схема БД будет создаваться заново. Все данные, которые были занесены раньше, будут удалены;  
-> **create-drop** - каждый раз при запуске приложения, схема БД будет создаваться заново, а при завершении - удаляться. Все данные, которые были занесены во время работы приложения, будут удалены по завершению приложения;  
-> **validate** - при инициализации будет совершена проверка соответствуют ли конфигурации классов и схема БД. Если мы внесли изменение в конфигурацию какого-то класса, а схема в БД не была изменена, выбросится исключение;  
-> **show_sql** – данное свойство указывает, будут ли выводится SQL-запросы, которые генерит Hibernate на консоль. В процессе отладки это бывает очень удобно. 
-> - тэг – mapping. Он используется для перечисления всех классов, которые имеют связь с базой данных. Т.е. если вы хотите использовать какой-то класс для связи с какой-то таблицей, вы должны его здесь указать.
-2. Servlet, Servlet container, Distributed servlet container, Servlet context, Servlet mapping. Жизненный цикл сервлетов. Особенности сервлетов. Объекты запроса и отклика. HTTP Servlet. Пример сервлета. Поддержка сессий. Общий дескриптор развёртывания web.xml. Фильтрация. 
-> **Servlet (сервлет)** – это класс на Java, расширяющий возможности сервера, к которому происходят обращения в рамках модели «запрос-отклик». Теоретически может поддерживать любой тип запросов, но чаще всего используются HTTP-сервлеты.  
-> **Servlet container (контейнер сервлета)** - контейнер, обеспечивающий сетевые службы, при помощи которых посылаются запросы и ответы, декодируются запросы и форматируются ответы. Все контейнеры сервлетов должны поддерживать HTTP протокол, но могут также поддерживать дополнительные протоколы, например, HTTPS.  
-> **Distributed servlet container (распределенный контейнер сервлета)** - контейнер сервлета, запускающий Web-приложения, которые помечены как распределенные и выполняются на нескольких виртуальных машинах Java. При этом виртуальные машины могут быть запущены, как на одном, так и на разных компьютерах.  
-> **Servlet context (контекст сервлета)** - объект, содержащий представление (вид) Web-приложения, в котором запущен сервлет. Используя контекст, сервлет может вести журнал событий, получать URL-ссылки на ресурсы, а также устанавливать и хранить атрибуты, которые могут использоваться другими сервлетами в приложении.  
-> **Servlet mapping (отображение сервлета)** - определяет связь между структурой URL и сервлетом. Используется для отображения запросов в сервлеты. Если контейнер, обрабатывающий запрос, является JSP-контейнером, то неявно отображается URL, содержащий расширение .jsp.
-> 
-> **Жизненный цикл сервлета**
-> - Если экземпляр сервлета не существует, то контейнер:
->   - загружает класс сервлета; 
->   - создает его экземпляр; 
->   - вызывает метод init().
-> - При получении запроса вызывается метод service(), которому передаются объекты запроса и отклика.
-> - Если контейнеру требуется удалить объект сервлета, то вызывается метод destroy().
->
-> **Особенности сервлетов**
-> - Существуют механизмы реагирования на события, связанные с деятельностью сервлетов в приложении:
->   - javax.servlet.СобытиеListener 
->   - javax.servlet.СобытиеEvent
-> - Для обработки события требуется:
->   - написать класс, реализующий интерфейс. 
->   - снабдить этот класс аннотацией @WebListener (пакет javax.servlet.annotation).
-> - Требуется учитывать то, что сервлет является разделяемым ресурсом и работает с разделяемыми ресурсами. 
-> - Не следует использовать поля класса для хранения состояния, а особенно для передачи состояния между вызовами.
->
-> **Объект запроса**
-> - Реализует интерфейс javax.servlet.ServletRequest. 
-> - Позволяет узнать характеристики запроса, в том числе значения параметров:
->   - String getParameter(String name)
->   - Enumeration getParameterNames()
->   - и ряд других методов
-> - Позволяет получить доступ к потоку запроса:
->   - ServletInputStream getInputStream()
->   - BufferedReader getReader()
->   - Можно вызвать только один из этих двух методов
-> - Позволяет получить параметры запроса
->   - int getContentLength()
->   - String getContentType()
->   - String getProtocol()
->   - и т.д.
->   
-> **Объект отклика**
-> - Реализует интерфейс javax.servlet.ServletResponse
-> - Основные методы:
->   - ServletOutputStream getOutputStream()  
->   Далее для вывода используются обычные средства бинарного вывода
->   - PrintWriter getWriter()  
->   Далее для вывода используются обычные средства символьного вывода
->   - Можно вызвать только один из этих двух методов.
-> - Позволяет установить параметры отклика
->   - Для установки типа отклика используется метод setContentType()
->   - Для установки кодировки используется метод setCharacterEncoding()
->   - Сбрасывает текущий буфер клиенту flushBuffer()
->   - Очищает буфер и сбрасывает статус reset()
->
-> **HTTP Servlet**  
-> - javax.servlet.http.HttpServlet - абстрактный класс, позволяющий создавать сервлеты, удобные для Web. 
-> - Наследные классы должны переопределять хотя бы один из методов обработки запроса. 
-> - Обычно это один из методов:
->   - void doGet(HttpServletRequest req, HttpServletResponse resp)
->   - void doPost(HttpServletRequest req, HttpServletResponse resp)
-> - Классы снабжаются аннотацией @WebServlet.
-
-**Пример сервлета.**
  ```java
-import java.io.*;
-import javax.servlet.*;
-import javax.servlet.http.*;
-import javax.servlet.annotation.*;
-@WebServlet("/MyServlet.html")
-public class MyServlet extends HttpServlet {
-  protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    PrintWriter out = response.getWriter();
-    try {
-      out.print("<html><body>This is text document, which has "
-                 + "<a href=\"other.html\">link</a>"
-                 + " to another document</body></html>");
-    }
-    finally {
-      out.close(); }
-  }
-}
-```
-> **Поддержка сессий.**
-> - В HTTP-сервлетах в объектах запроса и отклика добавляются дополнительные методы. 
-> - Среди них появляются методы работы с сессиями, включая работу с **Cookies** (англ. печенье) - небольшой фрагмент данных, отправленный веб-сервером и хранимый на компьютере пользователя. Веб-клиент (обычно веб-браузер) всякий раз при попытке открыть страницу соответствующего сайта пересылает этот фрагмент данных веб-серверу в составе HTTP-запроса. Применяется для сохранения данных на стороне пользователя, на практике обычно используется для аутентификации пользователя, хранения персональных предпочтений и настроек пользователя, отслеживания состояния сеанса доступа пользователя, ведения статистики о пользователях. 
-> - Для передачи значений между запросами можно использовать атрибуты сессии.
->   - HttpSession.getAttribute(String name)
->   - HttpSession.setAttribute(String name, Object value)
->   - И ряд других методов
-> Пример:
-```java
-public class CashierServlet extends HttpServlet {
-  public void doGet (HttpServletRequest request,
-                     HttpServletResponse response)
-                     throws ServletException, IOException {
-    // Get the user's session and shopping cart
-    HttpSession session = request.getSession();
-    ShoppingCart cart = (ShoppingCart)session.getAttribute("cart");
-    //...
-  }
-}
-out.println("<a href=\"" +
-response.encodeURL(request.getContextPath() +
-"/bookcatalog") + "\">");
-```
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.Properties;
 
-> Общий дескриптор развёртывания web.xml.
-> - Определяет параметры развёртывания web-приложения в контейнере. 
-> - Некоторые из этих параметров даже не могут быть указаны с помощью аннотаций классов, т.к. относятся к web-приложению в целом. 
-> - Указанные в дескрипторе параметры перекрывают параметры, указанные с помощью аннотаций классов.
-> Пример. Дескриптор развертывания web.xml
-```xml
-<?xml version="1.0" encoding="UTF-8"?>
-<web-app version="3.0" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd">
-    <listener>
-        <listener-class>org.tempuri.MyListner</listener-class>
-    </listener>
-    <servlet>
-        <servlet-name>MyServlet</servlet-name>
-        <servlet-class>org.tempuri.MyServlet</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>MyServlet</servlet-name>
-        <url-pattern>/MyServlet.html</url-pattern>
-    </servlet-mapping>
-    <welcome-file-list>
-        <welcome-file>/MyServlet.html</welcome-file>
-    </welcome-file-list>
-</web-app>
-```
-
-> **Фильтрация**
-> - Получаемые запросы и формируемые отклики могут быть подвергнуты фильтрации. 
-> - API для классов фильтрации определен интерфейсами Filter, FilterConfig, FilterChain пакета javax.servlet. 
-> - Включение фильтров осуществляется с помощью аннотации @WebFilter. 
-> - Фильтры используются в основном для перехвата и изменения запросов и ответов от сервера. Рассмотрим случай, в котором проверяется сессия для каждого запроса пользователя, и если она верна, то только тогда пользователь может получить доступ к странице. Этого можно добиться путем проверки сессий на всех сервлет страницах (страницы JSP), которые запрашивают пользователи, или можно сделать это с помощью фильтра.
-> Пример. Фильтр
-```java
-public class LogFilter implements Filter {
-    public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {
-        HttpServletRequest request = (HttpServletRequest) req;
-        String ipAddress = request.getRemoteAddr();
-        System.out.println("IP " + ipAddress + ", Time " + new Date());
-        chain.doFilter(req, res);
-    }
-
-    public void init(FilterConfig config) throws ServletException {
-//Get init parameter
-        String testParam = config.getInitParameter("test-param");
-//Print the init parameter
-        System.out.println("Test Param: " + testParam);
-    }
-
-    public void destroy() {
-//add code to release any resource
-    }
-}
-```
-> - Метод init() используется для инициализации любого кода, который используется фильтром. Также отметим, что init() получит объект FilterConfig, который содержит различную информацию уровня фильтров, а также параметры инициализации, который передаются из web.xml (дескриптора развертывания). 
-> - doFilter() фактически выведет информацию. Можно изменить этот метод и добавить код, который может изменить запрос / состояние сессии / ответ, добавить атрибут в запрос и т.д. 
-> - destroy() вызывается контейнером, когда он хочет убрать мусор за фильтром. Это обычно делается, когда фильтр не используется в течение длительного времени и сервер хочет выделить память для других приложений.
-> Пример. Маппинг фильтра в web.xml
-```xml
-<filter>
-<filter-name>LogFilter</filter-name>
-<filter-class>sample.LogFilter</filter-class>
-<init-param>
-<param-name>test-param</param-name>
-<param-value>This parameter is for testing.</param-value>
-</init-param>
-</filter>
-<filter-mapping>
-<filter-name>LogFilter</filter-name>
-<url-pattern>/*</url-pattern>
-</filter-mapping>
-
-```
-3. JSP. Принцип работы, обработка ошибок, виды JSP, элементы JSP-страницы. Пример.
-> **JSP** – это технология, которая упрощает создание web страниц с динамически изменяющимся (во время генерации страницы) содержимым.
-```html
-<html>
-<body>
-<p>HI<%= (request.getParameter("name")!=null) ? ", " + request.getParameter("name"): "" %>!!!</p>
-</body>
-</html>
-```
-> **JSP файл** – это текстовый документ, содержимое которого можно разбить на две части:
-> - статический текст (каркас) – создается при помощи специальных редакторов. 
-> - динамический (генерируемый во время выполнения страницы) – обычно пишется в среде разработки программирования.
-
-> **Принципы работы:**
-> - JSP-файл транслируется в файл java. 
-> - Процесс трансляции управляется директивами (<%@ page […] %>). 
-> - Полученный файл компилируется в класс сервлета. 
-> - Далее с ним идет работа как с сервлетом. 
-> - Конфигурация сервера может включать ряд настроек по работе с jsp-страницами.
-
-> **Обработка ошибок**
-> - Во время трансляции и компиляции
->   - поведение зависит от используемого сервера; 
->   - класс сервлета создан не будет.
-> - Во время выполнения
->   - если для данной JSP страницы (или приложения) определена «страница на случай ошибки» (errorPage), то будет выведена указанная страница; 
->   - иначе – в зависимости от сервера и его настроек.
-      
-> **Виды JSP:**
-> - JSP-страница
->   - Это страница из статических и динамических элементов. 
->   - Статическая часть имеет произвольный формат.
-> - JSP-документ
->   - XML-файл, содержащий тэги особого вида. 
->   - Имеет ту же функциональность, что и JSP-страница, но требует представления в виде тэгов ряда элементов.
-
-> **Элементы JSP-страницы**
-> - Статический текст 
-> - Элементы сценариев 
->   - Комментарии		**<%-- […] --%>**
->   - Объявления		**<%! […] %>**
->   - Скриптлеты		**<% […] %>**
->   - Выражения			**<%= […] %>**
->   - Директивы			**<%@ ? […]%>**
-> - Стандартные объекты.
-
-> Пример. JSP-страница с комментариями
-```html
-<html><body>
-  Hello World!
-  <%-- This is a JSP comment --%>
-  <!-- This is a HTML comment -->
-</body></html>
-```
-Фрагмент примерного кода сервлета
-```java
-out.write("<html><body>\n  Hello World!\n  ");
-out.write("\n  <!-- This is a HTML comment -->"
-           + "\n</body></html>\n");
-```
-4. Директива include. Стандартные объекты. Тэги <jsp:…>. Тэги <jsp:include>. Тэги <jsp:forward>. Взаимодействие с HTML-формами. Примеры. 
-> **Директива include.** 
-> - Предназначена для включения в формируемый отклик содержимого другого файла. 
-> - Включение статическое: происходит на этапе трансляции. 
-> - Включаться могут как статические, так и динамические ресурсы. 
-> - Существует специальный вид JSP-страниц – JSP Fragments (JSPF).
+public class Singleton {
+    private static Properties INSTANCE;
+    private static final String PATH = "/singleton/config.properties";
     
-Пример. Директива include. JSP-страницы
-```html
-Основная страница
-<%@page contentType="text/html; charset=UTF-8"%>
-<html><body>
-<%@include file="WEB-INF/jspf/fragment.jspf" %>
-</body></html>
-Включаемая страница
-<%@ page pageEncoding="UTF-8" %>
-Some fragment text
+    private Singleton() {}
+
+    public static synchronized Properties getInstance() {
+        if (INSTANCE == null) {
+            try {
+                INSTANCE = new Properties();
+                INSTANCE.load(new FileInputStream(PATH));
+            } catch (IOException e) {
+                System.out.println("Something goes wrong");
+            }
+        }
+        return INSTANCE;
+    }
+}
 ```
-Пример. Директива include.Примерный код сервлетов
-```java
-Основная страница
-public final class index_jsp ... {
-  private static java.util.Vector _jspx_dependants;
-  static {
-    _jspx_dependants = new java.util.Vector(1);
-    _jspx_dependants.add("/WEB-INF/jspf/fragment.jspf");
-  }
-  public void _jspService(HttpServletRequest request,
-    HttpServletResponse response)
-    throws java.io.IOException, ServletException {
-    ...
-    out.write("<html><body>\n");
-    out.write("Some fragment text\n");
-    out.write("</body></html>\n");
-    ...
+ ```java
+import java.util.Properties;
+
+public class Main {
+    public static void main(String[] args) {
+        Properties p = Singleton.getInstance();
+        System.out.println(p.getProperty("user"));
+        System.out.println(p.getProperty("company"));
+        System.out.println(p.getProperty("name"));
+        System.out.println(p.getProperty("date"));
+    }
 }
 ```
 
-> **Стандартные объекты.**
-> - page  
-    Ссылка на текущий объект (по сути – объект сервлета).
-> - config  
-    Имеет тип javax.servlet.ServletConfig, позволяет получить контекст сервлета и параметры сервлета. 
-> - application   
-    Имеет тип javax.servlet.ServletContext, определяет контекст сервлета. 
-> - pageContext  
-    Имеет тип javax.servlet.jsp.PageContext, определяет контекст jsp-страницы. 
-> - session  
-    Имеет тип javax.servlet.http.HttpSession, представляет текущую сессию.
-> - request  
-    Имеет тип javax.servlet.http.HttpServletRequest, представляет текущий запрос. 
-> - response  
-    Имеет тип javax.servlet.http.HttpServletResponse, представляет текущий отклик.
-> - out  
-    Имеет тип javax.servlet.jsp.JspWriter, представляет поток для вывода, по функциональности схож с классом PrintWriter.
+1.2. Factory Method
+- создаем интерфейс с методом **createInstance** возвращающий интерфейс 
+```java
+import main.java.labs.model.Transport;
 
-> **Тэги <jsp:…>.**
-> - Являются еще одним средством управления ходом трансляции страницы. 
-> - В основном предназначены для формата JSP-документов.
-> - Позволяют:
->   - Описывать теги и их составляющие.
->   - Перенаправлять обработку запросов.
->   - Работать с компонентами JavaBeans.
->   - Включать в код страницы обращения к апплетам.
-
-> **Тэги <jsp:include>.**
-> - <jsp:include page="inclPage">
-> - Включает в страницу статический или динамический ресурс.
-> - Включение происходит динамически, во время выполнения.
-
-> **Тэги <jsp:forward>.**
-> - <jsp:forward page="inclPage">
-> - Передает обработку запроса другому ресурсу.
-> - Могут быть указаны дополнительные параметры.
-
-> **Взаимодействие с HTML-формами. Примеры.** 
-> - Элементы HTML-управления должны находиться в форме.
-> - Для формы указывается адрес для перехода.
-> - Значения элементов ввода записываются в параметры запроса.
-> - В новой странице значения элементов ввода автоматически не заполняются.
-> - Элемент управления, активация которого привела к смене страницы, вносится в параметры запроса.
-
-5. Недостатки раннего JSP. Основные идеи смены парадигмы. Expression Language. Виды выражений EL. Пример. Литералы, операторы, объекты доступа к другим объектам. Custom tags. Библиотеки тегов. JSP Standard Tag Library. Библиотеки JSTL. 
-> **Недостатки раннего JSP.** 
-> - Смешение Java-кода и тегов страницы.
-> - Много «типовых» действий.
-> - «Некомфортность» работы на Java в ходе обработки запросов из-за:
->   - Громоздкости кода.
->   - Необходимости знания особенностей преобразования в сервлет.
-
-> **Основные идеи смены парадигмы.** 
-> - Альтернативный язык Expression Language.
-> - Использование библиотек тегов, особенно JSTL – JSP Standard Tag Library.
-> - Ориентация на компоненты в смысле JavaBeans и использование понятия свойств.
-> - Общие принципы остаются прежними.
-
-> **Expression Language.**
-> - Является альтернативой выражениям и скриптлетам.
-> - Динамическое чтение данных из:
->   - JavaBeans-компонентов.
->   - Неявных объектов.
->   - Различных структур данных.
-> - Динамическая запись данных в:
->   - Формы.
->   - JavaBeans-компоненты.
-> - Вызов статических и публичных методов.
-> - Динамическое выполнение простых операций.
-
-> **Виды выражений EL.** 
-> - По моменту вычисления:
->   - Немедленное вычисление.
->   - Отложенное вычисление.
-> - По цели выражения:
->   - Обращение к данным.
->   - Вызов метода.
-> - По режиму доступа:
->   - Только чтение.
->   - Чтение и запись данных.  
->
-> **Немедленное и отложенное вычисление**
-> - Немедленное вычисление (JSP и JSF):
->   - ${ выражение } 
->   - Позволяет лишь получить значение выражения.
-> - Отложенное вычисление (JSF):
->   - #{ выражение } 
->   - Выражение может использоваться различным образом в разные моменты жизненного цикла. 
->   - Позволяет не только получать значения, но и записывать их (в т.ч. для свойств бинов).
-> 
-> **Применение выражений с немедленным вычислением**
-> - Выражения EL могут применяться:
->   - в статическом тексте
->   - в качестве значений атрибутов тегов
->
-**Пример.**
-```html
-<some:tag>
-    some text ${expr} some text
-</some:tag>
-<some:tag value="${expr}"/>
-<some:tag value="some${expr}${expr}text${expr}"/>
+public interface TransportFactory {
+    Transport createInstance(String mark, int modelsSize);
+}
 ```
-> **Литералы в выражениях**
-> - Логические true, false
-> - Целочисленные 136
-> - С плавающей точкой 3.14, 1.0e10
-> - Строковые “string”
-> - Ссылочные null
->
-> **Операторы в выражениях**
-> - Доступ к элементам []
-> - Операторные скобки ()
-> - Унарные -  not  !  Empty (Empty А возвращает true, если А – ноль)
-> - Арифметические *  /  div  %  mod + -
-> - Сравнение <  >  <=  >= lt  gt  le  ge  ==  !=  eq  ne
-> - Логические && and ||  or ? :
+- создаем конкретные фабрики имплементирующие этот интерфейс 
+```java
+import main.java.labs.model.Car;
+import main.java.labs.model.Transport;
 
-> **Custom tags.** 
-> - Определяются пользователем и описывают часто используемые операции.
-> - Описываются и распространяются в виде библиотек тегов, определяющих семейства тегов и содержащих объекты, реализующие теги.
-> - Для использования тегов необходимо:
->   - Объявить библиотеку тегов
->   - Сделать ее доступной для web-приложения
-```html
-<prefix:tag attr1="value" ... attrN="value" />
-<prefix:tag attr1="value" ... attrN="value" >
-body
-</prefix:tag>
+public class AutoFactory implements TransportFactory {
+    @Override
+    public Transport createInstance(String mark, int modelsSize) {
+        return new Car(mark, modelsSize);
+    }
+}
 ```
-> **Библиотеки тегов.** 
-> - Библиотеки тегов описываются в tld-файлах
-> - Библиотеки могут быть
->   - публичными и храниться в сети
->   - локальными и храниться в каталоге WEB-INF
-> - Для подключения библиотеки необходимо использовать директиву taglib
+```java
+import main.java.labs.model.Motorbike;
+import main.java.labs.model.Transport;
+
+public class MotoFactory implements TransportFactory {
+    @Override
+    public Transport createInstance(String mark, int modelsSize) {
+        return new Motorbike(mark, modelsSize);
+    }
+}
 ```
-<%@ taglib prefix="tlt" uri="/WEB-INF/iterator.tld"%> 
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+- у них один единственный метод createInstance() который в зависимости от фабрики возвращает нужный объект
+```java
+public class TransportUtils {
+    private static TransportFactory factory = new AutoFactory();
+
+    public static void setTransportFactory(TransportFactory factory) {
+        TransportUtils.factory = factory;
+    }
+
+    public static Transport createInstance(String name, int size) {
+        return factory.createInstance(name, size);
+    }
+}
 ```
-> Обработка custom tags 
-> - В процессе компиляции jsp-страницы теги будут преобразовываться в java-код в соответствии с описанием в библиотеке тегов. 
-> - Если соответствующая библиотека не была подключена, относящиеся к ней теги будут трактоваться как статическая часть jsp-страницы и просто выводиться в отклик.
+**Вызов в main:**
+```java
+public class Main {
+    public static void main(String[] args) {
+        Transport transport = TransportUtils.createInstance("auto", 3);
+        System.out.println(transport.getClass().getSimpleName());
 
-> **JSP Standard Tag Library.**
-> - Библиотека включает в себя набор тегов, функциональность которых часто используется в web-приложениях.
-> - Эти теги должны обрабатываться единообразно в рамках всех контейнеров.
-> - Это позволяет:
->   - избежать использования различных библиотек.
->   - единообразно организовывать JSP-страницы .
+        TransportUtils.setTransportFactory(new MotoFactory());
+        transport = TransportUtils.createInstance("moto", 2);
+        System.out.println(transport.getClass().getSimpleName());
+    }
+}
+```
 
-> **Библиотеки JSTL.** 
-> - JSTL поставляется в виде набора библиотек:
->   - Различные направления функциональности
->   - Различные пространства имен
-> - Библиотеки и соответствующие пути
->   - Core http://java.sun.com/jsp/jstl/core
->   - XML http://java.sun.com/jsp/jstl/xml
->   - Internationalization	http://java.sun.com/jsp/jstl/fmt
->   - Database http://java.sun.com/jsp/jstl/sql
->   - Functions http://java.sun.com/jsp/jstl/functions
+1.3. Prototype
+- Добавить в транспортные классы реализации методов Object clone(). Клонирование должно быть глубоким. Использовать super.clone(). 
 
-6. AJAX.
-> Ajax – это аббревиатура, означающая "Асинхронный JavaScript и XML" (Asynchronous JavaScript and XML). Основное назначение Ajax состоит в предоставлении веб-приложению возможности эффективной обработки взаимодействия между пользователем и веб-страницей, при этом значительно снижаются требования к обновлению или полной перезагрузке страницы при каждом взаимодействии с пользователем. Такой подход предоставляет широкие возможности при использовании браузера (аналогичные возможностям настольного приложения или веб-приложения на основе подключаемого модуля). Обработка взаимодействия Ajax осуществляется асинхронно в фоновом режиме. Благодаря этому пользователь может продолжать работу со страницей. Взаимодействие Ajax инициируется посредством кода JavaScript. После выполнения взаимодействия Ajax код JavaScript обновляет исходный текст HTML для страницы. Изменения вносятся немедленно без необходимости обновления страницы. Взаимодействия Ajax могут использоваться для выполнения таких задач, как проверка правильности формата вводимых записей на основе серверной логики (непосредственно во время их ввода пользователем), извлечение подробных данных из сервера, динамическое обновление данных на странице и передача элементов форм страницы.
->
-> Для того, чтобы осуществлять обмен данными, на странице должен быть создан объект XMLHttpRequest, который является своеобразным посредником между Браузером пользователя и сервером (рис. 30). С помощью XMLHttpRequest можно отправить запрос на сервер, а также получить ответ в виде различного рода данных. 
-> 
-> Обмениваться данными с сервером можно двумя способами. Первый способ — это GET-запрос. В этом запросе вы обращаетесь к документу на сервере, передавая ему аргументы через сам URL. Не рекомендуется делать GET-запросы к серверу с большими объемами данных. Для этого существует POST-запрос.
->
-> Клиентская часть, написанная на Javascript, должна обеспечивать необходимую функциональность для безопасного обмена с сервером и предоставлять методы для обмена данными любым из вышеперечисленных способов. Серверная часть должна обрабатывать входные данные, и на основе их генерировать новую информацию (например, работая с базой данных), и отдавать ее обратно клиенту. Например, для запроса информации с сервера можно использовать обычный GET-запрос с передачей нескольких и небольших по размеру параметров, а для обновления информации, или добавления новой информации потребуется использовать уже POST-запрос, так как он позволяет передавать большие объемы данных.
-> 
-> Ответ от сервера может быть не только XML, как следует из названия технологии. Помимо XML, можно получить ответ в виде обычного текста, или же JSON (Javascript Object Notation). Если ответ был получен простым текстом, то его можно сразу вывести в контейнер на странице. При получении ответа в виде XML, обычно происходит обработка полученного XML документа на стороне клиента и преобразование данных к (X)HTML. При получении ответа в формате JSON клиент должен лишь выполнить полученный код для получения полноценного объекта Javascript. 
->
-> **Методы объекта XMLHttpRequest**
-> - abort() — отмена текущего запроса к серверу.
-> - getAllResponseHeaders() — получить все заголовки ответа от сервера.
-> - getResponseHeader(«имя_заголовка») — получить указаный заголовок.
-> - open(«тип_запроса»,«URL»,«асинхронный»,«имя_пользователя»,«пароль») — инициализация запроса к серверу, указание метода запроса. Тип запроса и URL — обязательные параметры. Третий аргумент — булево значение. Обычно всегда указывается true или не указывается вообще (по умолчанию — true). Четвертый и пятый аргументы используются для аутентификации (это очень небезопасно, хранить данные об аутентификации в скрипте, так как скрипт может посмотреть любой пользователь).
-> - send(«содержимое») — послать HTTP запрос на сервер и получить ответ.
-> - setRequestHeader(«имя_заголовка»,«значение») — установить значения заголовка запроса.
->
-> **Создание объекта XMLHttpRequest**
-> Как уже говорилось выше, создание данного объекта для каждого типа браузера — уникальный процесс. 
-> 
-> Например, для создания объекта в Gecko-совместимых браузерах, Konqueror`е и Safari, нужно использовать следующее выражение:
-> 
-> var Request = new XMLHttpRequest(); 
->
-> А для Internet Explorer`а используется следующее:
->
-> var Request = new ActiveXObject("Microsoft.XMLHTTP"); 
-> 
-> Либо 
->
-> var Request = new ActiveXObject("Msxml2.XMLHTTP"); 
->
-> Теперь, чтобы добиться кроссбраузерности, необходимо сложить все функции в одну:
->
-> После всего этого можно создавать данный объект и не беспокоится за работоспособность на популярных браузерах. Но создать объект можно в разных местах. Если создать его глобально, то в определенный момент времени возможен будет только один запрос к серверу. Можно создавать объект в сякий раз, как происходит запрос к серверу (это почти полностью решит проблему).**Запрос к серверу**
-> 
-> Алгоритм запроса к серверу выглядит так:
-> - Проверка существования XMLHttpRequest.
-> - Инициализация соединения с сервером.
-> - Посылка запроса серверу.
-> - Обработка полученных данных.
-> 
-> Предположим, что существует веб-страница, на которой пользователь может выполнять поиск информации о композиторах. Эта страница содержит поле, в которое вводится имя композитора. В примере приложения для поля ввода может использоваться функция автозавершения. Другими словами, пользователь может ввести часть имени композитора, после чего веб-приложение предложит варианты полного имени, перечислив всех композиторов, чьи имена или фамилии начинаются с введенных символов. Таким образом, пользователь может не помнить полное имя композитора, однако функция автозавершения обеспечит быстрый интуитивный доступ к требуемой информации.
-> 
-> Реализация функции автозавершения в поле поиска может служить примером возможностей, предоставляемых Ajax. Ajax использует объект XMLHttpRequest для асинхронной передачи запросов и ответов между клиентом и сервером. На рисунке 30 представлена блок-схема операций связи, происходящих между клиентом и сервером.
->
-> Для описания потока операций на блок-схеме можно использовать следующие действия.
-> - Пользователь инициирует событие, например, отпускает клавишу при наборе имени. Это приводит к вызову функции JavaScript, которая инициализирует объект XMLHttpRequest.
-> - Объект XMLHttpRequest настроен с учетом параметра запроса, который включает идентификатор элемента управления, инициировавшего событие, а также произвольное значение, введенное пользователем. Затем объект XMLHttpRequest выполняет асинхронный запрос к веб-серверу.
-> - На веб-сервере осуществляется обработка этого запроса с использованием соответствующего объекта, например сервлета или прослушивающего процесса. Из хранилища данных извлекаются необходимые данные и подготавливается ответ, содержащий данные в форме документа XML.
-> - Наконец, объект XMLHttpRequest получает данные XML с использованием функции ответного вызова, выполняет их обработку и обновляет модель DOM (Document Object Model, объектная модель документов) HTML для отображения страницы, содержащей новые данные.
-> 
-> Способ создания варианта автозаполнения путем выполнения потока операций процесса, показанного на рисунке выше, состоит в следующем: сначала на стороне клиента создаются файлы для страницы представления данных и функции, необходимые для генерации объекта XMLHttpRequest. Затем выполняется настройка на стороне сервера, заключающаяся в создании хранилища данных и бизнес-логики с использованием технологий на основе Java. Наконец, на стороне клиента реализуется функция обратного вызова callback() и другие функциональные возможности JavaScript, необходимые для обновления DOM HTML.
+**Car:**
+```java
+import java.io.*;
+import java.util.Arrays;
+
+public class Car implements Transport, Cloneable {
+    private String mark;
+    private Model[] models;
+
+    public Car(String mark, int modelsSize) {
+        this.mark = mark;
+        this.models = new Model[modelsSize];
+        for (int i = 0; i < modelsSize; i++) {
+            this.models[i] = new Model("name" + (i + 1), i + 1);
+        }
+    }
+
+    @Override
+    public Car clone() throws CloneNotSupportedException {
+        Car cloned = (Car) super.clone();
+        cloned.models = Arrays.copyOf(this.models, getSize());
+        for (int i = 0; i < getSize(); i++) {
+            cloned.models[i] = (Model) this.models[i].clone();
+        }
+        return cloned;
+    }
+    
+    // another methods
+    
+    //  внутренний класс Модель, имеющий поля название модели и её цену, а также конструктор (класс Автомобиль хранит массив Моделей),
+    private class Model implements Serializable, Cloneable {
+
+        private String modelName;
+        private double price;
+
+        Model(String modelName, double price) {
+            this.modelName = modelName;
+            this.price = price;
+        }
+
+        @Override
+        protected Object clone() throws CloneNotSupportedException {
+            return super.clone();
+        }
+    }
+}
+```
+
+**Motorbike:**
+```java
+import java.io.Serializable;
+import java.util.Date;
+
+public class Motorbike implements Transport {
+    private int size;
+    private Model head;
+    private transient long lastModified;
+    private String mark;
+
+    {
+        this.head = new Model("headModel", null, null, 101);
+        this.head.prev = this.head;
+        this.head.next = this.head;
+        this.lastModified = new Date().getTime();
+    }
+
+    public Motorbike(String mark, int size) {
+        this.mark = mark;
+        this.size = size;
+        if (size > 1) {
+            Model prev = null;
+            for (int i = 0; i < size - 1; i++) {
+                Model currentModel = new Model("name" + (i + 1), null, null, i + 1);
+                if (i == 0) {
+                    this.head.prev = currentModel;
+                    this.head.next = currentModel;
+                    currentModel.prev = this.head;
+
+                } else {
+                    currentModel.prev = prev;
+                    this.head.prev.next = currentModel;
+                    this.head.prev = currentModel;
+                }
+                currentModel.next = this.head;
+                prev = currentModel;
+            }
+        }
+    }
+
+    @Override
+    public Motorbike clone() throws CloneNotSupportedException {
+        Motorbike cloned = (Motorbike) super.clone();
+        cloned.head = new Model("headModel", null, null, 101);
+        cloned.head.next = cloned.head;
+        cloned.head.prev = cloned.head;
+        Model original = this.head.next;
+        Model clone = cloned.head.next;
+        while (original != this.head) {
+            Model current = (Model) original.clone();
+            Model last = cloned.head.prev;
+            last.next = current;
+            current.prev = last;
+            current.next = cloned.head;
+            cloned.head.prev = current;
+            clone = clone.next;
+            original = original.next;
+        }
+        return cloned;
+    }
+    
+    // another methods
+
+    private class Model implements Serializable, Cloneable {
+        String modelName;
+        double price;
+        Model prev;
+        Model next;
+
+        public Model(String modelName, Model next, Model prev, double price) {
+            this.modelName = modelName;
+            this.next = next;
+            this.prev = prev;
+            this.price = price;
+        }
+
+        @Override
+        protected Object clone() throws CloneNotSupportedException {
+            return super.clone();
+        }
+    }
+}
+```
+- Проверить работу методов clone() в методе main().
+```java
+import main.java.labs.exceptions.DuplicateModelNameException;
+import main.java.labs.exceptions.NoSuchModelNameException;
+
+import java.util.Arrays;
+
+public class Main {
+    public static void main(String[] args) {
+        try {
+            Car car = new Car("audi", 2);
+            Car clonedCar = car.clone();
+            printOriginalAndClone(car, clonedCar);
+            clonedCar.setModelName("name1", "model1");
+            printOriginalAndClone(car, clonedCar);
+
+            System.out.println("---------------------------------------");
+
+            Motorbike moto = new Motorbike("moto", 3);
+            Motorbike clonedMoto = moto.clone();
+            printOriginalAndClone(moto, clonedMoto);
+            clonedMoto.setModelName("name1", "model1");
+            printOriginalAndClone(moto, clonedMoto);
+        } catch (DuplicateModelNameException | NoSuchModelNameException | CloneNotSupportedException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static void printOriginalAndClone(Transport transport, Transport clonedTransport) {
+        System.out.println("Original: " + transport.getMark() + " " + Arrays.toString(transport.getModels()));
+        System.out.println("Clone: " + clonedTransport.getMark() + " " + Arrays.toString(clonedTransport.getModels()));
+    }
+}
+```
+
+**Теория:**
+- Abstract Factory 
+- Builder 
+- Factory Method 
+- Prototype 
+- Singleton.
+
+2. Структурные паттерны
+
+    2.1 Adapter
+    - Реализовать класс адаптера, метод которого принимает в качестве параметра массив строк и записывает их по очереди в выходной байтовый поток (OutputStream), который он «адаптирует». 
+```java
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.List;
+
+public class Adapter {
+
+    public static void writeStringsToOutputStream(String[] strings, OutputStream outputStream) throws IOException {
+        for (String str : strings) {
+            if (str != null) {
+                outputStream.write(str.length());
+                outputStream.write(str.getBytes());
+            }
+        }
+        outputStream.flush();
+    }
+
+    public static String[] readStringsFromInputStream(InputStream inputStream) throws IOException {
+        List<String> strings = new ArrayList<>();
+
+        int length;
+        while ((length = inputStream.read()) != -1) {
+            byte[] buffer = new byte[length];
+            inputStream.read(buffer);
+            strings.add(new String(buffer));
+        }
+
+        return strings.toArray(new String[0]);
+    }
+}
+```
+- Продемонстрировать работу в методе main().
+```java
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.Arrays;
+
+public class Main {
+    public static void main(String[] args) {
+        String[] originalStrings = {"Hello", "World", "Java"};
+
+        try {
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            Adapter.writeStringsToOutputStream(originalStrings, outputStream);
+            System.out.println(outputStream);
+
+            ByteArrayInputStream inputStream = new ByteArrayInputStream(outputStream.toByteArray());
+            String[] readStrings = Adapter.readStringsFromInputStream(inputStream);
+            System.out.println(Arrays.toString(readStrings));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+}
+```
+
+2.2 Decorator
+- Добавить в класс со статическими методами реализацию метода Transport synchronizedTransport (Transport t), возвращающего ссылку на
+класс-обертку указанного транспортного средства, безопасный с точки
+зрения многопоточности.
+```java
+public class TransportUtils {
+    public static Transport synchronizedTransport(Transport t) {
+        return new DecoratorSynchronizedTransport(t);
+    }
+}
+```
+
+- Для этого потребуется описать некий новый
+класс, реализующий интерфейс Транспортное средство.
+```java
+public class DecoratorSynchronizedTransport implements Transport {
+    private Transport transport;
+
+    public DecoratorSynchronizedTransport(Transport transport) {
+        this.transport = transport;
+    }
+
+    @Override
+    public synchronized int getSize() {
+        return transport.getSize();
+    }
+
+    @Override
+    public synchronized void addNewModel(String modelName, double price) throws DuplicateModelNameException {
+        transport.addNewModel(modelName, price);
+    }
+
+    @Override
+    public synchronized void removeModel(String modelName) throws NoSuchModelNameException {
+        transport.removeModel(modelName);
+    }
+
+    // and other methods
+}
+```
+
+2.3 Facade
+
+Предоставляет унифицированный интерфейс вместо набора интерфейсов
+некоторой подсистемы. Фасад определяет интерфейс более высокого уровня,
+который упрощает использование подсистемы.
+
+В качестве примера: работник МФЦ, у которого мы спрашиваем об услугах
+и который скрывает за собой работу других сотрудников, что приводит к 
+меньшему взаимодействию обращающихся с системой МФЦ
+
+2.4 Proxy
+
+- server
+```java
+package main.java.labs.server;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.Socket;
+
+public class ClientHandler extends Thread {
+    private Socket socket;
+    public ClientHandler(Socket socket) {
+        this.socket = socket;
+    }
+
+    @Override
+    public void run() {
+        try (BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+             PrintWriter out = new PrintWriter(socket.getOutputStream(), true)) {
+
+            String input = in.readLine();
+            String[] numbers = input.split(" ");
+            double num1 = Double.parseDouble(numbers[0]);
+            double num2 = Double.parseDouble(numbers[1]);
+            double result = num1 * num2;
+
+            out.println(result);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                socket.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+}
+```
+
+- main:
+```java
+import java.net.ServerSocket;
+import java.net.Socket;
+
+public class Main {
+    public static void main(String[] args) {
+        try (ServerSocket serverSocket = new ServerSocket(5000)) {
+            System.out.println("Сервер запущен и ожидает подключения...");
+            while (true) {
+                Socket socket = serverSocket.accept();
+                new ClientHandler(socket).start();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}
+```
+
+- client:
+```java
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.Socket;
+import java.util.Scanner;
+
+public class Client {
+    public static void main(String[] args) {
+        try (Socket socket = new Socket("localhost", 5000);
+             PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
+             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+             Scanner scanner = new Scanner(System.in)) {
+
+            System.out.println("Подключено к серверу. Введите два числа, разделенных пробелом:");
+            
+            String userInput = scanner.nextLine();
+            out.println(userInput);
+            
+            String response = in.readLine();
+            System.out.println("Результат умножения: " + response);
+        } catch (IOException e) {
+            System.err.println("Ошибка в работе клиента: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+}
+```
+
+**Теория:**
+- Adapter
+- Bridge
+- Composite
+- Decorator
+- Facade
+- Flyweight
+- Proxy
+
+3. Образцы поведения
+
+   3.1 Chain of Responsibility
+   - Создаём интерфейс с двумя методами – установить следующего в качестве параметра этот же интерфейс и task()
+
+```java
+import main.java.labs.model.Transport;
+
+public interface ChainOfResponsibility {
+   void writeTransport(Transport transport);
+
+   void setNextChainOfResponsibility(ChainOfResponsibility next);
+}
+```
+   - Создаем два класса реализующих этот интерфейс
+```java
+import main.java.labs.model.Transport;
+import main.java.labs.utils.TransportUtils;
+
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+
+public class WriterColumns implements ChainOfResponsibility {
+    private ChainOfResponsibility next;
+
+    @Override
+    public void writeTransport(Transport transport) {
+        if (transport.getSize() > 3) {
+            try {
+                TransportUtils.writeTransport(transport, new BufferedWriter(new FileWriter("first_labs/src/main/resources/2.txt")));
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        } else if (this.next != null) {
+            next.writeTransport(transport);
+        } else
+            System.out.println(this.getClass().getSimpleName() +
+                    ": Необходимо сменить исполнителя");
+    }
+
+    @Override
+    public void setNextChainOfResponsibility(ChainOfResponsibility next) {
+        this.next = next;
+    }
+}
+```
+
+```java
+package main.java.labs.patterns.behavioral;
+
+import main.java.labs.model.Transport;
+import main.java.labs.utils.TransportUtils;
+
+import java.io.FileWriter;
+import java.io.IOException;
+
+public class WriterRows implements ChainOfResponsibility {
+    private ChainOfResponsibility next;
+
+    @Override
+    public void writeTransport(Transport transport) {
+        if (transport.getSize() <= 3) {
+            try (FileWriter writer = new FileWriter("first_labs/src/main/resources/1.txt")) {
+                TransportUtils.writeTransportToRow(transport, writer);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        } else if (this.next != null) {
+            next.writeTransport(transport);
+        } else
+            System.out.println(this.getClass().getSimpleName() +
+                    ": Необходимо сменить исполнителя");
+    }
+
+    @Override
+    public void setNextChainOfResponsibility(ChainOfResponsibility next) {
+        this.next = next;
+    }
+}
+```
+   - Они инкапсулирует в себе объект типа интерфейса и в переопределенном методе устанавливают её
+
+```java
+public class Main {
+    public static void main(String[] args) {
+        Car car = new Car("car model", 4);
+        ChainOfResponsibility writerTransport = new WriterRows();
+        writerTransport.writeTransport(new Motorbike("moto model", 2));
+        writerTransport.setNextChainOfResponsibility(new WriterColumns());
+        writerTransport.writeTransport(car);
+    }
+}
+```
+
+   3.2 Command
+- Интерфейс с одним методом
+```java
+import main.java.labs.model.Car;
+
+import java.io.Writer;
+
+public interface Command {
+    void writeCar(Car car, Writer writer);
+}
+```
+- Реализации этого интерфейса
+```java
+
+import main.java.labs.model.Car;
+import main.java.labs.utils.TransportUtils;
+
+import java.io.Writer;
+
+public class CommandColumns implements Command {
+    @Override
+    public void writeCar(Car car, Writer writer) {
+        TransportUtils.writeTransport(car, writer);
+    }
+}
+```
+
+```java
+import main.java.labs.model.Car;
+import main.java.labs.utils.TransportUtils;
+
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Writer;
+
+public class CommandRows implements Command {
+    @Override
+    public void writeCar(Car car, Writer writer) {
+        try {
+            TransportUtils.writeTransportToRow(car, writer);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+}
+```
+
+- Вызываемые методы в TransportUtils:
+```java
+public class TransportUtils {
+    public static void writeTransport(Transport v, Writer out) {
+        PrintWriter writer = new PrintWriter(out);
+        writer.println(v.getClass().getSimpleName());
+        writer.println(v.getMark());
+        writer.println(v.getSize());
+
+        if (v.getSize() > 0) {
+            String[] modelNames = v.getModels();
+            for (String modelName : modelNames)
+                writer.println(modelName);
+
+            double[] modelPrices = v.getPrices();
+            for (double modelPrice : modelPrices)
+                writer.println(modelPrice);
+        }
+        System.out.println("Success symbol writing object");
+        writer.flush();
+    }
+
+    public static void writeTransportToRow(Transport v, Writer writer) throws IOException {
+        writer.write(v.getClass().getSimpleName());
+        writer.write(v.getMark());
+        writer.write(v.getSize());
+
+        if (v.getSize() > 0) {
+            String[] modelNames = v.getModels();
+            for (String modelName : modelNames)
+                writer.write(modelName);
+
+            double[] modelPrices = v.getPrices();
+            for (double modelPrice : modelPrices)
+                writer.write(String.valueOf(modelPrice));
+        }
+        System.out.println("Success symbol writing object");
+        writer.flush();
+    }
+}
+```
+- Добавление логики в класс автомобиля:
+```java
+public class Car implements Transport {
+    private String mark;
+    private Model[] models;
+    private transient Command command;
+
+    // other methods
+
+    public void print(Writer out) {
+        command.writeCar(this, out);
+    }
+
+    public void setPrintCommand(Command command) {
+        this.command = command;
+    }
+}
+```
+- Main:
+
+```java
+public class Main {
+    public static void main(String[] args) {
+        Car car = new Car("car model", 4);
+
+        car.setPrintCommand(new CommandColumns());
+        car.print(new FileWriter("1.txt"));
+
+        car.setPrintCommand(new CommandRows());
+        car.print(new FileWriter("2.txt"));
+    }
+}
+```
+
+   3.3 Iterator
+   - Сделать класс Модель в классе Автомобиль доступным на уровне
+     пакета и статическим. Реализовать в нём метод toString(), возвращающий
+     название и цену модели.
+```java
+//  внутренний класс Модель, имеющий поля название модели и её цену, а также конструктор (класс Автомобиль хранит массив Моделей),
+    static class Model implements Serializable {
+
+        private String modelName;
+        private double price;
+
+        Model(String modelName, double price) {
+            this.modelName = modelName;
+            this.price = price;
+        }
+
+        @Override
+        public String toString() {
+            return "Model{" +
+                    "modelName='" + modelName + '\'' +
+                    ", price=" + price +
+                    '}';
+        }
+    }
+```
+   - Реализовать метод java.util.Iterator iterator() в классе Автомобиль.
+```java
+import java.io.*;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+
+public class Car implements Transport {
+    private class AutoIterator implements Iterator<Model> {
+        private int currentIndex = 0;
+
+        @Override
+        public boolean hasNext() {
+            return currentIndex < models.length;
+        }
+
+        @Override
+        public Model next() {
+            if (!hasNext()) {
+                throw new NoSuchElementException();
+            }
+            return models[currentIndex++];
+        }
+    }
+
+    public Iterator<Model> iterator() {
+        return new AutoIterator();
+    }
+}
+```
+- Main:
+```java
+public class Main {
+    public static void main(String[] args)  {
+        Car car = new Car("car model", 4);
+
+        Iterator<Car.Model> iterator = car.iterator();
+
+        while (iterator.hasNext()) {
+            Car.Model model = iterator.next();
+            System.out.println(model);
+        }
+    }
+}
+```
+   3.4 Memento
+   - Реализовать паттерн Memento, обеспечивающий сохранение
+     текущего состояния объекта типа Автомобиль:
+```java
+import java.io.*;
+
+public class Car implements Transport {
+    //  поле типа String, хранящее марку автомобиля,
+    private String mark;
+    private Model[] models;
+
+    // other methods
+
+    public static class Memento {
+        private byte[] state;
+
+        private void setAuto(Car car) throws IOException {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            ObjectOutputStream oos = new ObjectOutputStream(baos);
+            oos.writeObject(car);
+            oos.close();
+            this.state = baos.toByteArray();
+        }
+
+        private Car getAuto() throws IOException, ClassNotFoundException {
+            ByteArrayInputStream bais = new ByteArrayInputStream(this.state);
+            ObjectInputStream ois = new ObjectInputStream(bais);
+            return (Car) ois.readObject();
+        }
+    }
+
+    public Memento createMemento() throws IOException {
+        Memento memento = new Memento();
+        memento.setAuto(this);
+        return memento;
+    }
+
+    public void setMemento(Memento memento) throws IOException, ClassNotFoundException {
+        Car savedCar = memento.getAuto();
+        this.mark = savedCar.mark;
+        this.models = savedCar.models;
+    }
+}
+```
+   - main:
+```java
+public class Main {
+    public static void main(String[] args)  {
+        Car car = new Car("car model", 4);
+
+        try {
+            System.out.println("Original Car: " + car);
+            Car.Memento memento = car.createMemento();
+            car.setMark("Honda");
+            System.out.println("Modified Car: " + car);
+
+            car.setMemento(memento);
+            System.out.println("Restored Car: " + car);
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
+}
+```
+   3.5 Observer
+
+   3.6 State
+
+   3.7 Strategy
+   - Реализовать паттерн Strategy, обеспечивающий подсчёт количества
+   вхождений каждого элемента в одномерный массив целых чисел двумя
+   разными способами.
+```java
+import java.util.Map;
+
+public interface Strategy {
+    Map<Integer, Integer> count(int[] array);
+}
+```
+   - Реализации: 
+```java
+import java.util.HashMap;
+import java.util.Map;
+
+public class CountIteratorStrategy implements Strategy {
+    @Override
+    public Map<Integer, Integer> count(int[] array) {
+        Map<Integer, Integer> map = new HashMap<>();
+        for (int num : array) {
+            int count = 0;
+            for (int i : array) {
+                if (i == num) count++;
+            }
+            map.put(num, count);
+        }
+        return map;
+    }
+}
+```
+
+```java
+import java.util.Arrays;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
+public class CountStreamStrategy implements Strategy {
+    @Override
+    public Map<Integer, Integer> count(int[] array) {
+        return Arrays.stream(array)
+                .boxed()
+                .collect(Collectors.toMap(
+                        Function.identity(),
+                        e -> 1,
+                        Integer::sum
+                ));
+    }
+}
+```
+   - p.s. Имя входного файла, в котором записан исходный массив в виде
+     сериализованного объекта, передаётся как параметр командной строки
+     приложения. main:
+
+```java
+import java.io.*;
+import java.util.Iterator;
+import java.util.Map;
+
+public class Main {
+    public static void main(String[] args) {
+        /*
+        int[] array = {1, 2, 3, 4, 2, 3, 1, 2};
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("first_labs/src/main/resources/5.txt"))) {
+            oos.writeObject(array);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        */
+
+        if (args.length == 0) {
+            System.out.println("args don't exist file path");
+        } else {
+            String fileName = args[0];
+            int[] array = loadArrayFromFile(fileName);
+
+            if (array == null) {
+                System.out.println("failed loading array from file");
+                return;
+            }
+
+            Strategy strategy = new CountIteratorStrategy();
+            long startTime = System.currentTimeMillis();
+            Map<Integer, Integer> result = strategy.count(array);
+            long endTime = System.currentTimeMillis();
+            long duration = endTime - startTime;
+            System.out.println("Result: " + result + " for time: " + duration);
+
+            strategy = new CountStreamStrategy();
+            startTime = System.currentTimeMillis();
+            result = strategy.count(array);
+            endTime = System.currentTimeMillis();
+            duration = endTime - startTime;
+            System.out.println("Result: " + result + " for time: " + duration);
+        }
+    }
+
+    private static int[] loadArrayFromFile(String fileName) {
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(fileName))) {
+            return (int[]) ois.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+}
+```
+
+   3.8 Template Method
+
+   3.9 Visitor
+   - Реализовать паттерн Visitor, обеспечивающий печать полей объекта
+     типа Транспортное средство в консоль в столбик или в одну строку
+      - Transport:
+```java
+import java.io.Serializable;
+
+public interface Transport extends Serializable {
+    // other methods
+    void accept(Visitor visitor);
+}
+```
+- Car:
+```java
+public class Car implements Transport {
+    private String mark;
+    private Model[] models;
+
+    // other methods
+    
+    @Override
+    public void accept(Visitor visitor) {
+        visitor.visit(this);
+    }
+}
+```
+- Motorbike:
+```java
+public class Motorbike implements Transport {
+    private int size;
+    private Model head;
+    private transient long lastModified;
+    private String mark;
+
+    // other methods
+    
+    @Override
+    public void accept(Visitor visitor) {
+        visitor.visit(this);
+    }
+}
+```
+   - main:
+```java
+public class Main {
+    public static void main(String[] args)  {
+        Car car = new Car("car model", 4);
+
+        Visitor visitor = new PrintVisitor();
+        car.accept(visitor);
+        new Motorbike("moto", 3).accept(visitor);
+    }
+}
+```
+4. Другие виды паттернов
+
+   4.1 MVC
+    - Model
+```java
+import java.util.Map;
+import java.util.TreeMap;
+
+public class Model {
+    private final Map<Double, Double> points = new TreeMap<>();
+    public void addPoint(double x) {
+        points.put(x, Math.sin(x));
+    }
+
+    public void removePoint(double x) {
+        points.remove(x);
+    }
+
+    public void updatePoint(double oldX, double newX) {
+        if (points.containsKey(oldX)) {
+            points.remove(oldX);
+            points.put(newX, Math.sin(newX));
+        }
+    }
+
+    public Map<Double, Double> getPoints() {
+        return points;
+    }
+}
+```
+
+```java
+public class Point {
+    private Double x;
+    private Double y;
+
+    public Point(Double x, Double y) {
+        this.x = x;
+        this.y = y;
+    }
+
+    public Double getX() {
+        return x;
+    }
+
+    public void setX(Double x) {
+        this.x = x;
+    }
+
+    public Double getY() {
+        return y;
+    }
+
+    public void setY(Double y) {
+        this.y = y;
+    }
+}
+```
+- Controller
+```java
+import com.example.mvcapp.model.Model;
+import com.example.mvcapp.model.Point;
+import com.example.mvcapp.view.CustomDoubleTableCell;
+import com.example.mvcapp.view.View;
+import javafx.scene.control.TableColumn;
+
+public class Controller {
+    private final Model model;
+    private final View view;
+
+    public Controller(Model model, View view) {
+        this.model = model;
+        this.view = view;
+
+        setupEventHandlers();
+        setupTableEditing();
+        updateView();
+    }
+
+    private void setupEventHandlers() {
+        view.getAddButton().setOnAction(event -> {
+            try {
+                double x = Double.parseDouble(view.getXInput().getText());
+                model.addPoint(x);
+                updateView();
+                view.getXInput().clear();
+            } catch (NumberFormatException e) {
+                view.getXInput().setText("Ошибка: введите число");
+            }
+        });
+
+        view.getRemoveButton().setOnAction(event -> {
+            try {
+                double x = Double.parseDouble(view.getXInput().getText());
+                model.removePoint(x);
+                updateView();
+                view.getXInput().clear();
+            } catch (NumberFormatException e) {
+                view.getXInput().setText("Ошибка: введите число");
+            }
+        });
+    }
+    
+    private void setupTableEditing() {
+        TableColumn<Point, Double> xColumn = (TableColumn<Point, Double>) view.getTable().getColumns().get(0);
+
+        xColumn.setCellFactory(column -> new CustomDoubleTableCell<>() {
+            @Override
+            public void commitEdit(Double newValue) {
+                if (newValue == null) return;
+
+                Point point = getTableView().getItems().get(getIndex());
+                double oldX = point.getX();
+
+                if (newValue != oldX) {
+                    model.updatePoint(oldX, newValue);
+                    super.commitEdit(newValue);
+                    updateView();
+                }
+            }
+        });
+    }
+
+    private void updateView() {
+        view.updateChartAndTable(model.getPoints());
+    }
+}
+```
+- View
+```java
+import com.example.mvcapp.model.Point;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.geometry.Insets;
+import javafx.scene.Scene;
+import javafx.scene.chart.LineChart;
+import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.XYChart;
+import javafx.scene.control.Button;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
+import javafx.stage.Stage;
+
+import java.util.Map;
+
+public class View {
+    private final Stage stage;
+    private final LineChart<Number, Number> chart;
+    private final XYChart.Series<Number, Number> series;
+    private final TextField xInput;
+    private final Button addButton;
+    private final Button removeButton;
+    private final TableView<Point> table;
+    private final ObservableList<Point> tableData;
+
+    public View(Stage stage) {
+        this.stage = stage;
+        this.tableData = FXCollections.observableArrayList();
+
+        NumberAxis xAxis = new NumberAxis();
+        NumberAxis yAxis = new NumberAxis();
+        this.chart = new LineChart<>(xAxis, yAxis);
+        this.series = new XYChart.Series<>();
+        this.xInput = new TextField();
+        this.addButton = new Button("Добавить точку");
+        this.removeButton = new Button("Удалить точку");
+        this.table = new TableView<>();
+
+        initializeUI();
+    }
+
+    private void initializeUI() {
+        chart.setTitle("y = sin(x)");
+        series.setName("sin(x)");
+        chart.getData().add(series);
+
+        xInput.setPromptText("Введите x");
+        table.setEditable(true);
+
+        TableColumn<Point, Double> xColumn = new TableColumn<>("X");
+        xColumn.setCellValueFactory(new PropertyValueFactory<>("x"));
+        xColumn.setPrefWidth(150);
+
+        TableColumn<Point, Double> yColumn = new TableColumn<>("Y");
+        yColumn.setCellValueFactory(new PropertyValueFactory<>("y"));
+        yColumn.setPrefWidth(150);
+
+        table.getColumns().addAll(xColumn, yColumn);
+        table.setItems(tableData);
+
+        table.widthProperty().addListener((obs, oldVal, newVal) -> {
+            double width = newVal.doubleValue();
+            xColumn.setPrefWidth(width / 2);
+            yColumn.setPrefWidth(width / 2);
+        });
+
+        HBox topPanel = new HBox(15, xInput, addButton, removeButton);
+        topPanel.setPadding(new Insets(15));
+
+        HBox.setHgrow(xInput, Priority.ALWAYS);
+        xInput.setMaxWidth(Double.MAX_VALUE);
+
+        Region spacer = new Region();
+        spacer.setPrefHeight(10);
+
+        BorderPane root = new BorderPane();
+        root.setTop(topPanel);
+        root.setCenter(table);
+        root.setBottom(chart);
+
+        Scene scene = new Scene(root, 800, 600);
+        stage.setScene(scene);
+        stage.setTitle("График синуса");
+    }
+
+    public void updateChartAndTable(Map<Double, Double> points) {
+        series.getData().clear();
+        tableData.clear();
+
+        points.forEach((x, y) -> {
+            series.getData().add(new XYChart.Data<>(x, y));
+            tableData.add(new Point(x, y));
+        });
+    }
+
+    public void show() {
+        stage.show();
+    }
+
+    public TextField getXInput() {
+        return xInput;
+    }
+
+    public Button getAddButton() {
+        return addButton;
+    }
+
+    public Button getRemoveButton() {
+        return removeButton;
+    }
+
+    public TableView<Point> getTable() {
+        return table;
+    }
+}
+```
+
+```java
+import javafx.scene.control.TableCell;
+import javafx.scene.control.TextField;
+import javafx.util.converter.DoubleStringConverter;
+
+public class CustomDoubleTableCell<S> extends TableCell<S, Double> {
+    private final TextField textField = new TextField();
+    private final DoubleStringConverter converter = new DoubleStringConverter();
+
+    public CustomDoubleTableCell() {
+        textField.setOnAction(event -> commitEdit());
+        textField.focusedProperty().addListener((obs, oldVal, newVal) -> {
+            if (!newVal) commitEdit();
+        });
+    }
+
+    @Override
+    public void startEdit() {
+        super.startEdit();
+        if (isEmpty()) return;
+
+        textField.setText(converter.toString(getItem()));
+        setGraphic(textField);
+        textField.selectAll();
+        textField.requestFocus();
+    }
+
+    @Override
+    public void cancelEdit() {
+        super.cancelEdit();
+        setText(converter.toString(getItem()));
+        setGraphic(null);
+    }
+
+    @Override
+    public void updateItem(Double item, boolean empty) {
+        super.updateItem(item, empty);
+        if (empty) {
+            setText(null);
+            setGraphic(null);
+        } else {
+            if (isEditing()) {
+                textField.setText(converter.toString(getItem()));
+                setGraphic(textField);
+            } else {
+                setText(converter.toString(getItem()));
+                setGraphic(null);
+            }
+        }
+    }
+
+    private void commitEdit() {
+        try {
+            Double value = converter.fromString(textField.getText());
+            commitEdit(value);
+        } catch (NumberFormatException | IndexOutOfBoundsException e) {
+            cancelEdit();
+        }
+    }
+}
+```
+- main:
+```java
+import com.example.mvcapp.controller.Controller;
+import com.example.mvcapp.model.Model;
+import com.example.mvcapp.view.View;
+import javafx.application.Application;
+import javafx.stage.Stage;
+
+public class MvcApp extends Application {
+    @Override
+    public void start(Stage stage) {
+        View view = new View(stage);
+        Model model = new Model();
+        Controller controller = new Controller(model, view);
+        view.show();
+    }
+
+    public static void main(String[] args) {
+        launch();
+    }
+}
+```
+   4.2 DAO
+
+- Interface:
+```java
+import main.java.labs.model.Transport;
+
+import java.io.IOException;
+
+public interface Dao {
+    Transport read(String filename);
+    void write(Transport transport, String filename) throws IOException;
+}
+```
+- Implementation
+```java
+import main.java.labs.model.Transport;
+import main.java.labs.utils.TransportUtils;
+
+import java.io.*;
+
+public class ByteDao implements Dao {
+    @Override
+    public Transport read(String filename) {
+        try {
+            Transport transport = TransportUtils.inputTransport(new FileInputStream(filename));
+            System.out.println("Transport from bytes : " + transport);
+            return transport;
+        } catch (FileNotFoundException e) {
+            System.out.println("Failed to reading Transport from bytes. Error : " + e.getMessage());
+        }
+        return null;
+    }
+
+    @Override
+    public void write(Transport transport, String filename) {
+        try {
+            TransportUtils.outputTransport(transport, new FileOutputStream(filename));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+}
+```
+
+```java
+import main.java.labs.model.Transport;
+import main.java.labs.utils.TransportUtils;
+
+import java.io.*;
+
+public class SymbolDao implements Dao {
+    @Override
+    public Transport read(String filename) {
+        try {
+            Transport transport = TransportUtils.readTransport(new BufferedReader(new FileReader(filename)));
+            System.out.println("Transport from symbols : " + transport);
+            return transport;
+        } catch (FileNotFoundException e) {
+            System.out.println("Failed to reading Transport from symbols. Error : " + e.getMessage());
+        }
+        return null;
+    }
+
+    @Override
+    public void write(Transport transport, String filename) {
+        try {
+            TransportUtils.writeTransport(transport, new BufferedWriter(new FileWriter(filename)));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+}
+```
+- methods in TransportUtils:
+```java
+import main.java.labs.exceptions.DuplicateModelNameException;
+import main.java.labs.model.Car;
+import main.java.labs.model.Motorbike;
+import main.java.labs.model.Transport;
+import main.java.labs.threads.DecoratorSynchronizedTransport;
+
+import java.io.*;
+import java.nio.charset.StandardCharsets;
+
+public class TransportUtils {
+    public static Transport inputTransport(InputStream in) {
+        DataInputStream dataIn = new DataInputStream(in);
+        Transport transport = null;
+        try {
+            String className = readString(dataIn);
+            if (className.isEmpty()) throw new ClassCastException("Failed casting");
+
+            String mark = readString(dataIn);
+
+            switch (className.toLowerCase()) {
+                case ("car") -> transport = new Car(mark, 0);
+                case ("motorbike") -> transport = new Motorbike(mark, 0);
+            }
+
+            int modelsSize;
+            if ((modelsSize = dataIn.readInt()) > 0) {
+                String[] allModelNames = new String[modelsSize];
+                for (int i = 0; i < allModelNames.length; i++)
+                    allModelNames[i] = readString(dataIn);
+
+                double[] allModelPrices = new double[modelsSize];
+                for (int i = 0; i < allModelPrices.length; i++)
+                    allModelPrices[i] = dataIn.readDouble();
+
+                setModels(transport, allModelNames, allModelPrices);
+            }
+            System.out.println("Success byte reading object");
+        } catch (IOException | DuplicateModelNameException e) {
+            System.out.println("Failed byte reading transport from byte stream. " + e.getMessage());
+        }
+        return transport;
+    }
+
+    public static void writeTransport(Transport v, Writer out) {
+        PrintWriter writer = new PrintWriter(out);
+        writer.println(v.getClass().getSimpleName());
+        writer.println(v.getMark());
+        writer.println(v.getSize());
+
+        if (v.getSize() > 0) {
+            String[] modelNames = v.getModels();
+            for (String modelName : modelNames)
+                writer.println(modelName);
+
+            double[] modelPrices = v.getPrices();
+            for (double modelPrice : modelPrices)
+                writer.println(modelPrice);
+        }
+        System.out.println("Success symbol writing object");
+        writer.flush();
+    }
+
+    public static Transport readTransport(Reader in) {
+        Transport transport = null;
+        try {
+            BufferedReader reader = new BufferedReader(in);
+            String className = reader.readLine();
+
+            String mark = reader.readLine();
+            switch (className.toLowerCase()) {
+                case ("car") -> transport = new Car(mark, 0);
+                case ("motorbike") -> transport = new Motorbike(mark, 0);
+            }
+
+            int modelsSize;
+            if ((modelsSize = Integer.parseInt(reader.readLine())) > 0) {
+                String[] allModelNames = new String[modelsSize];
+                for (int i = 0; i < allModelNames.length; i++)
+                    allModelNames[i] = reader.readLine();
+
+                double[] allModelPrices = new double[modelsSize];
+                for (int i = 0; i < allModelPrices.length; i++)
+                    allModelPrices[i] = Double.parseDouble(reader.readLine());
+
+                setModels(transport, allModelNames, allModelPrices);
+            }
+            System.out.println("Success symbol reading object");
+        } catch (IOException | DuplicateModelNameException e) {
+            System.out.println("Failed symbol reading transport from byte stream. " + e.getMessage());
+        }
+        return transport;
+    }
+
+    private static String readString(DataInputStream dataIn) throws IOException {
+        int length = dataIn.readInt();
+        byte[] bytes = dataIn.readNBytes(length);
+        return new String(bytes, StandardCharsets.UTF_8);
+    }
+
+    public static void writeTransport(Transport v, Writer out) {
+        PrintWriter writer = new PrintWriter(out);
+        writer.println(v.getClass().getSimpleName());
+        writer.println(v.getMark());
+        writer.println(v.getSize());
+
+        if (v.getSize() > 0) {
+            String[] modelNames = v.getModels();
+            for (String modelName : modelNames)
+                writer.println(modelName);
+
+            double[] modelPrices = v.getPrices();
+            for (double modelPrice : modelPrices)
+                writer.println(modelPrice);
+        }
+        System.out.println("Success symbol writing object");
+        writer.flush();
+    }
+}
+```
+- main:
+
+```java
+public class Main {
+    public static void main(String[] args) {
+        Transport car = new Car("car model", 4);
+        Transport motorbike = new Motorbike("moto model", 3);
+        String FILENAME_1 = "path\\1.txt";
+        String FILENAME_2 = "path\\2.txt";
+
+        Dao dao = new SymbolDao();
+        dao = new ByteDao();
+        dao.write(car, FILENAME_1);
+        dao.read(FILENAME_1);
+        dao.write(motorbike, FILENAME_2);
+        dao.read(FILENAME_2);
+    }
+}
+```
